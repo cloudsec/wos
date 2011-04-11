@@ -1,0 +1,226 @@
+GAS LISTING load.s 			page 1
+
+
+   1              		.text
+   2              		.global startup_32, pg_dir
+   3              		.include "kernel.h"
+   1              	#define KERNEL_CODE_TYPE        0x9a
+   2              	#define KERNEL_DATA_TYPE        0x92
+   3              	#define USER_CODE_TYPE          0xfa
+   4              	#define USER_DATA_TYPE          0xf2
+   5              	#define VIDEO_TYPE              KERNEL_DATA_TYPE
+   6              	
+   7              	#define DESC_DEFAULT_TYPE       0xc
+   8              	
+   9              	#define KERNEL_CODE_DESC        0x2
+  10              	#define KERNEL_DATA_DESC        0x3
+  11              	#define USER_CODE_DESC          0x4
+  12              	#define USER_DATA_DESC          0x5
+  13              	#define VIDEO_DESC              0x6
+  14              	
+  15              	#define CODE_LIMIT              0xffffffff
+  16              	#define DATA_LIMIT              CODE_LIMIT
+  17              	
+  18              	#define CODE_BASE               0x0
+  19              	#define DATA_BASE               CODE_BASE
+  20              	
+  21              	#define VIDEO_LIMIT             0xffff
+  22              	#define VIDEO_BASE              0xb8000
+  23              	
+  24              	.set CODE_SEL, 0x08	# code segment selector in kernel mode 
+  25              	.set DATA_SEL, 0x10 # data segment selector in kernel mode
+  26              	.set IDT_ADDR, 0x80000	# IDT start address
+  27              	.set IDT_SIZE, (256*8)	# IDT has fixed length
+  28              	.set GDT_ADDR, (IDT_ADDR+IDT_SIZE)
+  29              				# GDT starts after IDT
+  30              	.set GDT_ENTRIES, 5	# GDT has 5 descriptors
+  31              				# null descriptor
+  32              				# cs segment descriptor for kernel
+  33              				# ds segment descriptor for kernel
+  34              				# current process tss
+  35              				# current process ldt
+  36              	.set GDT_SIZE, (8*GDT_ENTRIES)
+  37              				# GDT length
+  38              	.set KERNEL_SECT, 72	# Kernel lenght, counted by sectors
+   4              		.org 0
+   5              	pg_dir:
+   6              	startup_32:
+   7 0000 B8100000 		movl $0x10, %eax
+   7      00
+   8 0005 8ED8     		movw %ax, %ds
+   9 0007 8EC0     		movw %ax, %es
+  10 0009 8EE0     		movw %ax, %fs
+  11 000b 8ED0     		movw %ax, %ss
+  12 000d BC6E6000 		movl $init_stack, %esp
+  12      00
+  13              	
+  14 0012 FC       		cld
+  15 0013 BE000201 		movl $0x10200, %esi
+  15      00
+  16 0018 BF000200 		movl $0x200, %edi
+GAS LISTING load.s 			page 2
+
+
+  16      00
+  17 001d B9802300 		movl $(KERNEL_SECT - 1) << 7, %ecx
+  17      00
+  18 0022 F3       		rep
+  19 0023 A5       		movsl
+  20              	
+  21 0024 E8FCFFFF 		call setup_gdt
+  21      FF
+  22 0029 E8FCFFFF 		call setup_idt
+  22      FF
+  23 002e 0F011560 		lgdt new_gdt48
+  23      500000
+  24 0035 0F011D68 		lidt new_idt48
+  24      500000
+  25              	
+  26 003c B8100000 		movl $0x10, %eax
+  26      00
+  27 0041 8ED8     		mov %ax, %ds
+  28 0043 8EC0     		mov %ax, %es
+  29 0045 8EE0     		mov %ax, %fs
+  30 0047 8EE8     		mov %ax, %gs
+  31 0049 BC6E6000 		movl $init_stack, %esp
+  31      00
+  32              	
+  33 004e FA       		cli
+  34 004f E8FCFFFF 		call init_8259A
+  34      FF
+  35              	
+  36 0054 31C0     	        xorl %eax, %eax
+  37 0056 40       	1:      incl %eax
+  38 0057 A3000000 	        movl %eax, 0x000000
+  38      00
+  39 005c 39050000 	        cmpl %eax, 0x100000
+  39      1000
+  40 0062 74F2     	        je 1b
+  41              	
+  42 0064 00000000 	.org 0x1000
+  42      00000000 
+  42      00000000 
+  42      00000000 
+  42      00000000 
+  43              	pg0:
+  44              	
+  45 1000 00000000 	.org 0x2000
+  45      00000000 
+  45      00000000 
+  45      00000000 
+  45      00000000 
+  46              	pg1:
+  47              	
+  48 2000 00000000 	.org 0x3000
+  48      00000000 
+  48      00000000 
+  48      00000000 
+  48      00000000 
+  49              	pg2:
+  50              	
+GAS LISTING load.s 			page 3
+
+
+  51 3000 00000000 	.org 0x4000
+  51      00000000 
+  51      00000000 
+  51      00000000 
+  51      00000000 
+  52              	pg3:
+  53              	
+  54 4000 00000000 	.org 0x5000
+  54      00000000 
+  54      00000000 
+  54      00000000 
+  54      00000000 
+  55              	
+  56 5000 68000000 		pushl $kernel_init
+  56      00
+  57 5005 EB01     		jmp setup_paging
+  58              	
+  59 5007 90       	.align 2
+  60              	setup_paging:
+  61 5008 B9001400 	        movl $1024*5,%ecx 
+  61      00
+  62 500d 31C0     	        xorl %eax,%eax
+  63 500f 31FF     	        xorl %edi,%edi 
+  64 5011 FCF3AB   	        cld;rep;stosl
+  65 5014 C7050000 	        movl $pg0+7, pg_dir 
+  65      00000710 
+  65      0000
+  66 501e C7050400 	        movl $pg1+7, pg_dir+4
+  66      00000720 
+  66      0000
+  67 5028 C7050800 	        movl $pg2+7, pg_dir+8
+  67      00000730 
+  67      0000
+  68 5032 C7050C00 	        movl $pg3+7, pg_dir+12
+  68      00000740 
+  68      0000
+  69 503c BFFC4F00 	        movl $pg3+4092,%edi
+  69      00
+  70 5041 B807F0FF 	        movl $0xfff007,%eax 
+  70      00
+  71 5046 FD       	        std
+  72 5047 AB       	3:      stosl             
+  73 5048 2D001000 	        subl $0x1000,%eax
+  73      00
+  74 504d 7DF8     	        jge 3b
+  75 504f 31C0     	        xorl %eax,%eax 
+  76 5051 0F22D8   	        movl %eax,%cr3
+  77 5054 0F20C0   	        movl %cr0,%eax
+  78 5057 0D000000 	        orl $0x80000000,%eax
+  78      80
+  79 505c 0F22C0   	        movl %eax,%cr0
+  80 505f C3       	        ret
+  81              	
+  82              	.align 8
+  83              	new_gdt48:
+  84 5060 FFFF     	        .word 8192*8 - 1
+  85 5062 00000000 	        .long new_gdt
+GAS LISTING load.s 			page 4
+
+
+  86              	
+  87 5066 6690     	.align 8
+  88              	new_idt48:
+  89 5068 FF07     		.word 256*8 - 1
+  90 506a 00000000 		.long new_idt
+  91              	
+  92 506e 00000000 		.fill 1024,4,0
+  92      00000000 
+  92      00000000 
+  92      00000000 
+  92      00000000 
+  93              	init_stack:
+  94 606e 6E60     		.word init_stack
+GAS LISTING load.s 			page 5
+
+
+DEFINED SYMBOLS
+              load.s:6      .text:0000000000000000 startup_32
+              load.s:5      .text:0000000000000000 pg_dir
+            kernel.h:24     *ABS*:0000000000000008 CODE_SEL
+            kernel.h:25     *ABS*:0000000000000010 DATA_SEL
+            kernel.h:26     *ABS*:0000000000080000 IDT_ADDR
+            kernel.h:27     *ABS*:0000000000000800 IDT_SIZE
+            kernel.h:28     *ABS*:0000000000080800 GDT_ADDR
+            kernel.h:30     *ABS*:0000000000000005 GDT_ENTRIES
+            kernel.h:36     *ABS*:0000000000000028 GDT_SIZE
+            kernel.h:38     *ABS*:0000000000000048 KERNEL_SECT
+              load.s:93     .text:000000000000606e init_stack
+              load.s:83     .text:0000000000005060 new_gdt48
+              load.s:88     .text:0000000000005068 new_idt48
+              load.s:43     .text:0000000000001000 pg0
+              load.s:46     .text:0000000000002000 pg1
+              load.s:49     .text:0000000000003000 pg2
+              load.s:52     .text:0000000000004000 pg3
+              load.s:60     .text:0000000000005008 setup_paging
+
+UNDEFINED SYMBOLS
+setup_gdt
+setup_idt
+init_8259A
+kernel_init
+new_gdt
+new_idt

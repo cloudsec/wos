@@ -1,0 +1,514 @@
+GAS LISTING trap_asm.s 			page 1
+
+
+   1              	#.include "gdt.h"
+   2              	.align 2
+   3              	.global divide_error, debug, nmi, int3, overflow, bounds
+   4              	.global invalid_op, coprocessor_segment_overrun, reserved, irq13
+   5              	.global double_fault, invalid_TSS, segment_not_present
+   6              	.global device_not_available, page_fault, timer_interrupt
+   7              	.global stack_segment, general_protection, parallel_interrupt
+   8              	.global keyboard_interrupt, default_int
+   9              	
+  10              	.macro SAVE_ALL
+  11              		push %fs
+  12              		push %es
+  13              		push %ds
+  14              		pushl %eax
+  15              	        pushl %ebp
+  16              	        pushl %edi
+  17              	        pushl %esi
+  18              	        pushl %edx
+  19              	        pushl %ecx
+  20              	        pushl %ebx
+  21              	.endm
+  22              	
+  23              	.macro RESTORE_ALL
+  24              		popl %ebx
+  25              		popl %ecx
+  26              		popl %edx
+  27              		popl %esi
+  28              		popl %edi
+  29              		popl %ebp
+  30              		popl %eax
+  31              		pop %ds
+  32              		pop %es
+  33              		pop %fs
+  34              	.endm
+  35              	
+  36              	.align 2
+  37              	divide_error:
+  38 0000 6A01     		push $1
+  39 0002 0FA0061E 		SAVE_ALL
+  39      50555756 
+  39      525153
+  40 000d 54       		push %esp
+  41 000e 66B81000 		movw $0x10, %ax
+  42 0012 8ED8     		movw %ax, %ds
+  43 0014 8EC0     		movw %ax, %es
+  44 0016 8EE0     		movw %ax, %fs
+  45 0018 E8FCFFFF 		call do_divide_error
+  45      FF
+  46 001d 83C404   		addl $4, %esp
+  47 0020 5B595A5E 		RESTORE_ALL
+  47      5F5D581F 
+  47      070FA1
+  48 002b 83C404   		addl $4, %esp
+  49 002e CF       		iret
+  50              	
+  51 002f 90       	.align 2
+  52              	debug:
+GAS LISTING trap_asm.s 			page 2
+
+
+  53 0030 6A00     	        push $0
+  54 0032 0FA0061E 	        SAVE_ALL
+  54      50555756 
+  54      525153
+  55 003d 54       		push %esp
+  56 003e 66B81000 		movw $0x10, %ax
+  57 0042 8ED8     		movw %ax, %ds
+  58 0044 8EC0     		movw %ax, %es
+  59 0046 8EE0     		movw %ax, %fs
+  60 0048 E8FCFFFF 	        call do_debug
+  60      FF
+  61 004d 83C404   	        addl $4, %esp
+  62 0050 5B595A5E 	        RESTORE_ALL
+  62      5F5D581F 
+  62      070FA1
+  63 005b 83C404   	        addl $4, %esp
+  64 005e CF       	        iret
+  65              	
+  66 005f 90       	.align 2
+  67              	nmi:
+  68 0060 6A00     	        push $0
+  69 0062 0FA0061E 	        SAVE_ALL
+  69      50555756 
+  69      525153
+  70 006d 54       		push %esp
+  71 006e 66B81000 		movw $0x10, %ax
+  72 0072 8ED8     		movw %ax, %ds
+  73 0074 8EC0     		movw %ax, %es
+  74 0076 8EE0     		movw %ax, %fs
+  75 0078 E8FCFFFF 	        call do_nmi
+  75      FF
+  76 007d 83C404   	        addl $4, %esp
+  77 0080 5B595A5E 	        RESTORE_ALL
+  77      5F5D581F 
+  77      070FA1
+  78 008b 83C404   	        addl $4, %esp
+  79 008e CF       	        iret
+  80              	
+  81 008f 90       	.align 2
+  82              	int3:
+  83 0090 6A00     	        push $0
+  84 0092 0FA0061E 	        SAVE_ALL
+  84      50555756 
+  84      525153
+  85 009d 54       		push %esp
+  86 009e 66B81000 		movw $0x10, %ax
+  87 00a2 8ED8     		movw %ax, %ds
+  88 00a4 8EC0     		movw %ax, %es
+  89 00a6 8EE0     		movw %ax, %fs
+  90 00a8 E8FCFFFF 	        call do_int3
+  90      FF
+  91 00ad 83C404   	        addl $4, %esp
+  92 00b0 5B595A5E 	        RESTORE_ALL
+  92      5F5D581F 
+  92      070FA1
+  93 00bb 83C404   	        addl $4, %esp
+  94 00be CF       	        iret
+GAS LISTING trap_asm.s 			page 3
+
+
+  95              	
+  96 00bf 90       	.align 2
+  97              	overflow:
+  98 00c0 6A00     	        push $0
+  99 00c2 0FA0061E 	        SAVE_ALL
+  99      50555756 
+  99      525153
+ 100 00cd 54       		push %esp
+ 101 00ce 66B81000 		movw $0x10, %ax
+ 102 00d2 8ED8     		movw %ax, %ds
+ 103 00d4 8EC0     		movw %ax, %es
+ 104 00d6 8EE0     		movw %ax, %fs
+ 105 00d8 E8FCFFFF 	        call do_overflow
+ 105      FF
+ 106 00dd 83C404   	        addl $4, %esp
+ 107 00e0 5B595A5E 	        RESTORE_ALL
+ 107      5F5D581F 
+ 107      070FA1
+ 108 00eb 83C404   	        addl $4, %esp
+ 109 00ee CF       	        iret
+ 110              	
+ 111 00ef 90       	.align 2
+ 112              	bounds:
+ 113 00f0 6A00     	        push $0
+ 114 00f2 0FA0061E 	        SAVE_ALL
+ 114      50555756 
+ 114      525153
+ 115 00fd 54       		push %esp
+ 116 00fe 66B81000 		movw $0x10, %ax
+ 117 0102 8ED8     		movw %ax, %ds
+ 118 0104 8EC0     		movw %ax, %es
+ 119 0106 8EE0     		movw %ax, %fs
+ 120 0108 E8FCFFFF 	        call do_bounds
+ 120      FF
+ 121 010d 83C404   	        addl $4, %esp
+ 122 0110 5B595A5E 	        RESTORE_ALL
+ 122      5F5D581F 
+ 122      070FA1
+ 123 011b 83C404   	        addl $4, %esp
+ 124 011e CF       	        iret
+ 125              	
+ 126 011f 90       	.align 2
+ 127              	invalid_op:
+ 128 0120 6A00     	        push $0
+ 129 0122 0FA0061E 	        SAVE_ALL
+ 129      50555756 
+ 129      525153
+ 130 012d 54       		push %esp
+ 131 012e 66B81000 		movw $0x10, %ax
+ 132 0132 8ED8     		movw %ax, %ds
+ 133 0134 8EC0     		movw %ax, %es
+ 134 0136 8EE0     		movw %ax, %fs
+ 135 0138 E8FCFFFF 	        call do_invalid_op
+ 135      FF
+ 136 013d 83C404   	        addl $4, %esp
+ 137 0140 5B595A5E 	        RESTORE_ALL
+ 137      5F5D581F 
+GAS LISTING trap_asm.s 			page 4
+
+
+ 137      070FA1
+ 138 014b 83C404   	        addl $4, %esp
+ 139 014e CF       	        iret
+ 140              	
+ 141 014f 90       	.align 2
+ 142              	coprocessor_segment_overrun:
+ 143 0150 6A00     	        push $0
+ 144 0152 0FA0061E 	        SAVE_ALL
+ 144      50555756 
+ 144      525153
+ 145 015d 54       		push %esp
+ 146 015e 66B81000 		movw $0x10, %ax
+ 147 0162 8ED8     		movw %ax, %ds
+ 148 0164 8EC0     		movw %ax, %es
+ 149 0166 8EE0     		movw %ax, %fs
+ 150 0168 E8FCFFFF 	        call do_coprocessor_segment_overrun
+ 150      FF
+ 151 016d 83C404   	        addl $4, %esp
+ 152 0170 5B595A5E 	        RESTORE_ALL
+ 152      5F5D581F 
+ 152      070FA1
+ 153 017b 83C404   	        addl $4, %esp
+ 154 017e CF       	        iret
+ 155              	
+ 156 017f 90       	.align 2
+ 157              	reserved:
+ 158 0180 6A00     	        push $0
+ 159 0182 0FA0061E 	        SAVE_ALL
+ 159      50555756 
+ 159      525153
+ 160 018d 54       		push %esp
+ 161 018e 66B81000 		movw $0x10, %ax
+ 162 0192 8ED8     		movw %ax, %ds
+ 163 0194 8EC0     		movw %ax, %es
+ 164 0196 8EE0     		movw %ax, %fs
+ 165 0198 E8FCFFFF 	        call do_reserved
+ 165      FF
+ 166 019d 83C404   	        addl $4, %esp
+ 167 01a0 5B595A5E 	        RESTORE_ALL
+ 167      5F5D581F 
+ 167      070FA1
+ 168 01ab 83C404   	        addl $4, %esp
+ 169 01ae CF       	        iret
+ 170              	
+ 171 01af 90       	.align 2
+ 172              	irq13:
+ 173 01b0 6A00     	        push $0
+ 174 01b2 0FA0061E 	        SAVE_ALL
+ 174      50555756 
+ 174      525153
+ 175 01bd 54       		push %esp
+ 176 01be 66B81000 		movw $0x10, %ax
+ 177 01c2 8ED8     		movw %ax, %ds
+ 178 01c4 8EC0     		movw %ax, %es
+ 179 01c6 8EE0     		movw %ax, %fs
+ 180 01c8 E8FCFFFF 	        call do_irq13
+ 180      FF
+GAS LISTING trap_asm.s 			page 5
+
+
+ 181 01cd 83C404   	        addl $4, %esp
+ 182 01d0 5B595A5E 	        RESTORE_ALL
+ 182      5F5D581F 
+ 182      070FA1
+ 183 01db 83C404   	        addl $4, %esp
+ 184 01de CF       	        iret
+ 185              	
+ 186 01df 90       	.align 2
+ 187              	device_not_available:
+ 188 01e0 6A00     	        push $0
+ 189 01e2 0FA0061E 	        SAVE_ALL
+ 189      50555756 
+ 189      525153
+ 190 01ed 54       	        push %esp
+ 191 01ee 66B81000 		movw $0x10, %ax
+ 192 01f2 8ED8     		movw %ax, %ds
+ 193 01f4 8EC0     		movw %ax, %es
+ 194 01f6 8EE0     		movw %ax, %fs
+ 195 01f8 E8FCFFFF 	        call do_device_not_available
+ 195      FF
+ 196 01fd 83C404   	        addl $4, %esp
+ 197 0200 5B595A5E 	        RESTORE_ALL
+ 197      5F5D581F 
+ 197      070FA1
+ 198 020b 83C404   	        addl $4, %esp
+ 199 020e CF       		iret
+ 200              	
+ 201 020f 90       	.align 2
+ 202              	timer_interrupt:
+ 203 0210 6A00     		push $0
+ 204 0212 0FA0061E 	        SAVE_ALL
+ 204      50555756 
+ 204      525153
+ 205 021d 54       		push %esp
+ 206 021e 66B81000 		movw $0x10, %ax
+ 207 0222 8ED8     		movw %ax, %ds
+ 208 0224 8EC0     		movw %ax, %es
+ 209 0226 8EE0     		movw %ax, %fs
+ 210 0228 B020     	        movb $0x20, %al
+ 211 022a E620     		outb %al, $0x20
+ 212 022c E8FCFFFF 		call do_timer
+ 212      FF
+ 213 0231 83C404   		add $4, %esp
+ 214 0234 5B595A5E 		RESTORE_ALL
+ 214      5F5D581F 
+ 214      070FA1
+ 215 023f 83C404   		add $4, %esp
+ 216 0242 CF       	        iret
+ 217              	
+ 218 0243 90       	.align 2
+ 219              	keyboard_interrupt:
+ 220 0244 0FA0061E 	        SAVE_ALL
+ 220      50555756 
+ 220      525153
+ 221 024f 66B81000 		movw $0x10, %ax
+ 222 0253 8ED8     		movw %ax, %ds
+ 223 0255 8EC0     		movw %ax, %es
+GAS LISTING trap_asm.s 			page 6
+
+
+ 224 0257 8EE0     		movw %ax, %fs
+ 225 0259 E8FCFFFF 		call do_keyboard
+ 225      FF
+ 226 025e 5B595A5E 		RESTORE_ALL
+ 226      5F5D581F 
+ 226      070FA1
+ 227              		#iret
+ 228              	
+ 229 0269 90       	.align 2
+ 230              	parallel_interrupt:
+ 231 026a 50       	        pushl %eax
+ 232 026b B020     	        movb $0x20,%al
+ 233 026d E620     	        outb %al,$0x20
+ 234 026f 58       	        popl %eax
+ 235 0270 CF       	        iret
+ 236              	
+ 237 0271 90       	.align 2
+ 238              	double_fault:
+ 239 0272 0FA0061E 	        SAVE_ALL
+ 239      50555756 
+ 239      525153
+ 240 027d 54       	        push %esp
+ 241 027e 66B81000 		movw $0x10, %ax
+ 242 0282 8ED8     		movw %ax, %ds
+ 243 0284 8EC0     		movw %ax, %es
+ 244 0286 8EE0     		movw %ax, %fs
+ 245 0288 E8FCFFFF 	        call do_double_fault
+ 245      FF
+ 246 028d 83C404   	        addl $4, %esp
+ 247 0290 5B595A5E 	        RESTORE_ALL
+ 247      5F5D581F 
+ 247      070FA1
+ 248 029b CF       	        iret
+ 249              	
+ 250              	.align 2
+ 251              	invalid_TSS:
+ 252 029c 0FA0061E 	        SAVE_ALL
+ 252      50555756 
+ 252      525153
+ 253 02a7 54       	        push %esp
+ 254 02a8 66B81000 		movw $0x10, %ax
+ 255 02ac 8ED8     		movw %ax, %ds
+ 256 02ae 8EC0     		movw %ax, %es
+ 257 02b0 8EE0     		movw %ax, %fs
+ 258 02b2 E8FCFFFF 	        call do_invalid_tss
+ 258      FF
+ 259 02b7 83C404   	        addl $4, %esp
+ 260 02ba 5B595A5E 	        RESTORE_ALL
+ 260      5F5D581F 
+ 260      070FA1
+ 261 02c5 CF       	        iret
+ 262              	
+ 263              	.align 2
+ 264              	segment_not_present:
+ 265 02c6 0FA0061E 	        SAVE_ALL
+ 265      50555756 
+ 265      525153
+GAS LISTING trap_asm.s 			page 7
+
+
+ 266 02d1 54       	        push %esp
+ 267 02d2 66B81000 		movw $0x10, %ax
+ 268 02d6 8ED8     		movw %ax, %ds
+ 269 02d8 8EC0     		movw %ax, %es
+ 270 02da 8EE0     		movw %ax, %fs
+ 271 02dc E8FCFFFF 	        call do_segment_not_present
+ 271      FF
+ 272 02e1 83C404   	        addl $4, %esp
+ 273 02e4 5B595A5E 	        RESTORE_ALL
+ 273      5F5D581F 
+ 273      070FA1
+ 274 02ef CF       	        iret
+ 275              	
+ 276              	.align 2
+ 277              	stack_segment:
+ 278 02f0 0FA0061E 	        SAVE_ALL
+ 278      50555756 
+ 278      525153
+ 279 02fb 54       	        push %esp
+ 280 02fc 66B81000 		movw $0x10, %ax
+ 281 0300 8ED8     		movw %ax, %ds
+ 282 0302 8EC0     		movw %ax, %es
+ 283 0304 8EE0     		movw %ax, %fs
+ 284 0306 E8FCFFFF 	        call do_stack_segment
+ 284      FF
+ 285 030b 83C404   	        addl $4, %esp
+ 286 030e 5B595A5E 	        RESTORE_ALL
+ 286      5F5D581F 
+ 286      070FA1
+ 287 0319 CF       	        iret
+ 288              	
+ 289              	.align 2
+ 290              	general_protection:
+ 291 031a 0FA0061E 	        SAVE_ALL
+ 291      50555756 
+ 291      525153
+ 292 0325 54       	        push %esp
+ 293 0326 66B81000 		movw $0x10, %ax
+ 294 032a 8ED8     		movw %ax, %ds
+ 295 032c 8EC0     		movw %ax, %es
+ 296 032e 8EE0     		movw %ax, %fs
+ 297 0330 E8FCFFFF 	        call do_general_protection
+ 297      FF
+ 298 0335 83C404   	        addl $4, %esp
+ 299 0338 5B595A5E 	        RESTORE_ALL
+ 299      5F5D581F 
+ 299      070FA1
+ 300 0343 CF       	        iret
+ 301              	
+ 302              	.align 2
+ 303              	page_fault:
+ 304 0344 0FA0061E 	        SAVE_ALL
+ 304      50555756 
+ 304      525153
+ 305 034f 54       	        push %esp
+ 306 0350 66B81000 		movw $0x10, %ax
+ 307 0354 8ED8     		movw %ax, %ds
+GAS LISTING trap_asm.s 			page 8
+
+
+ 308 0356 8EC0     		movw %ax, %es
+ 309 0358 8EE0     		movw %ax, %fs
+ 310 035a E8FCFFFF 	        call do_page_fault
+ 310      FF
+ 311 035f 83C404   	        addl $4, %esp
+ 312 0362 5B595A5E 	        RESTORE_ALL
+ 312      5F5D581F 
+ 312      070FA1
+ 313 036d CF       	        iret
+ 314              	
+ 315              	.align 2
+ 316              	default_int:
+ 317 036e 50       	        pushl %eax
+ 318 036f 51       	        pushl %ecx
+ 319 0370 52       	        pushl %edx
+ 320 0371 1E       	        push %ds
+ 321 0372 06       	        push %es
+ 322 0373 0FA0     	        push %fs
+ 323 0375 B8100000 	        movl $0x10, %eax
+ 323      00
+ 324 037a 8ED8     	        mov %ax, %ds
+ 325 037c 8EC0     	        mov %ax, %es
+ 326 037e 8EE0     	        mov %ax, %fs
+ 327 0380 68940300 	        pushl $default_int_msg
+ 327      00
+ 328 0385 E8FCFFFF 	        call printk
+ 328      FF
+ 329 038a 58       	        popl %eax
+ 330 038b 0FA1     	        pop %fs
+ 331 038d 07       	        pop %es
+ 332 038e 1F       	        pop %ds
+ 333 038f 5A       	        popl %edx
+ 334 0390 59       	        popl %ecx
+ 335 0391 58       	        popl %eax
+ 336 0392 CF       	        iret
+ 337              	
+ 338 0393 90       	.align 2
+ 339              	default_int_msg:
+ 340 0394 556E6B6F 		.asciz "Unkown Interrupt.\n"
+ 340      776E2049 
+ 340      6E746572 
+ 340      72757074 
+ 340      2E0A00
+GAS LISTING trap_asm.s 			page 9
+
+
+DEFINED SYMBOLS
+          trap_asm.s:37     .text:0000000000000000 divide_error
+          trap_asm.s:52     .text:0000000000000030 debug
+          trap_asm.s:67     .text:0000000000000060 nmi
+          trap_asm.s:82     .text:0000000000000090 int3
+          trap_asm.s:97     .text:00000000000000c0 overflow
+          trap_asm.s:112    .text:00000000000000f0 bounds
+          trap_asm.s:127    .text:0000000000000120 invalid_op
+          trap_asm.s:142    .text:0000000000000150 coprocessor_segment_overrun
+          trap_asm.s:157    .text:0000000000000180 reserved
+          trap_asm.s:172    .text:00000000000001b0 irq13
+          trap_asm.s:238    .text:0000000000000272 double_fault
+          trap_asm.s:251    .text:000000000000029c invalid_TSS
+          trap_asm.s:264    .text:00000000000002c6 segment_not_present
+          trap_asm.s:187    .text:00000000000001e0 device_not_available
+          trap_asm.s:303    .text:0000000000000344 page_fault
+          trap_asm.s:202    .text:0000000000000210 timer_interrupt
+          trap_asm.s:277    .text:00000000000002f0 stack_segment
+          trap_asm.s:290    .text:000000000000031a general_protection
+          trap_asm.s:230    .text:000000000000026a parallel_interrupt
+          trap_asm.s:219    .text:0000000000000244 keyboard_interrupt
+          trap_asm.s:316    .text:000000000000036e default_int
+          trap_asm.s:339    .text:0000000000000394 default_int_msg
+
+UNDEFINED SYMBOLS
+do_divide_error
+do_debug
+do_nmi
+do_int3
+do_overflow
+do_bounds
+do_invalid_op
+do_coprocessor_segment_overrun
+do_reserved
+do_irq13
+do_device_not_available
+do_timer
+do_keyboard
+do_double_fault
+do_invalid_tss
+do_segment_not_present
+do_stack_segment
+do_general_protection
+do_page_fault
+printk

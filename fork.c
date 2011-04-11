@@ -14,7 +14,7 @@ extern int task_flag;
 
 void run_task1(void);
 
-int last_pid = -1;
+int last_pid = 0;
 
 int get_pid(void)
 {
@@ -45,13 +45,18 @@ int fork_task(unsigned int eip)
 		printk("Alloc tsk page failed.\n");
 		return -1;
 	}
+	printk("Alloc tsk page at: 0x%x\n", tsk);
 
-	memcpy(&(tsk->tss), &(init_task.tss), sizeof(struct tss_struct));
+	memcpy(tsk, &init_task, sizeof(struct task_struct));
 
 	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE - 1;
 	tsk->tss.esp = (unsigned int)alloc_page() + PAGE_SIZE - 1;
 	tsk->tss.eip = eip;
 	tsk->tss.eflags = 0x3202;
+	tsk->tss.ldt_sel = TSS_SEL(pid);
+	printk("Alloc stack page at: 0x%x\n", tsk->tss.esp - PAGE_SIZE + 1);
+	printk("%d\n", tsk->tss.cr3);
+	printk("0x%x, 0x%x\n", tsk->tss.cs, tsk->tss.ds);
 
 	tsk->pid = pid;
 
@@ -60,9 +65,8 @@ int fork_task(unsigned int eip)
 	tsk->state = TASK_STOP;
 	tsk->counter = DEFAULT_COUNTER;
 	tsk->priority = DEFAULT_PRIORITY;
-	strcpy(tsk->task_name, "task1");
 
-	setup_task_pages(tsk);
+	//setup_task_pages(tsk);
 
         /* setup tss & ldt in the gdt.*/
         set_tss_desc(&new_gdt, &(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));

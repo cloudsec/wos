@@ -6,6 +6,7 @@
 
 extern struct task_struct init_task;
 extern void default_int(void);
+extern void run_init_task(void);
 
 asm(".align 16\n");
 struct gdt_desc new_gdt[8192] = {0,};
@@ -67,33 +68,10 @@ void print_gdt_list(void)
 		printk("0x%x, 0x%x\n", new_gdt[i].b, new_gdt[i].a);
 }
 
-void run_init_task(void)
-{
-        char c = 'A';
-        int x = 0;
-
-/*
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x0c, %%ah\n\t"
-                        "movb %0, %%al\n\t"
-                        "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
-*/
-}
-
 void kernel_init(void)
 {
-	init_mm();
 	init_vga();
+	init_mm();
 	init_trap();
 	init_keyboard();
 	init_schedule();
@@ -101,7 +79,9 @@ void kernel_init(void)
 
 	printk("Loading Kernel Into Protect Mode OK.\n");
 	print_gdt_list();
-	print_init_ldt_list();
+	//print_init_ldt_list();
+
+	fork_task((unsigned int)run_init_task);
 
 	sti();
 	printk("Move to ring3, start init task.\n");
@@ -122,5 +102,6 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 :::"ax");
+	//run_init_task();
 	for (;;);
 }

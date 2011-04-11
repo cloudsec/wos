@@ -8,6 +8,7 @@ extern unsigned int pg_dir;
 extern struct gdt_desc new_gdt[8192];
 
 unsigned int init_task_stack[4096] = {0};
+void run_init_task(void);
 
 struct task_struct init_task = {
                 {0,
@@ -17,14 +18,38 @@ struct task_struct init_task = {
                 0, 0, 0, 0,                     /* eax, ecx, edx, ebx */
                 0, 0, 0, 0,                     /* esp, ebp, esi, edi */
                 USER_DATA_SEL, USER_CODE_SEL, USER_DATA_SEL,
-                USER_DATA_SEL, USER_CODE_SEL, USER_DATA_SEL,/* es, cs, ss, ds, fs, gs */
+                USER_DATA_SEL, USER_DATA_SEL, USER_DATA_SEL,/* es, cs, ss, ds, fs, gs */
                 LDT_SEL(0),                     /* ldt sel */
                 0x80000000},
 		TSS_SEL(0), LDT_SEL(0),		/* tss_sel, ldt_sel */
-		0, TASK_STOP,			/* pid, state */
+		{{0,0},				/* ldt[0] */
+		{0x9f,0xc0fa00},		/* ldt[1] */
+		{0x9f,0xc0f200}},		/* ldt[2] */
+		0, TASK_RUNABLE,		/* pid, state */
 		DEFAULT_COUNTER,		/* counter, priority */
 		DEFAULT_PRIORITY,
-		"init_task"};			/* task_name */
+		NULL};			/* task_name */
+
+void run_init_task(void)
+{
+        char c = 'A';
+        int x = 0;
+
+        for (x = 0; ; x += 2) {
+                if (x == 3840) {
+                        x = 0;
+                        continue;
+                }
+
+                asm("movw $0x18, %%ax\n\t"
+                        "movw %%ax, %%gs\n\t"
+                        "movb $0x07, %%ah\n\t"
+                        "movb %0, %%al\n\t"
+                        "movl %1, %%edi\n\t"
+                        "movw %%ax, %%gs:(%%edi)\n\t"
+                        ::"m"(c),"m"(x));
+        }
+}
 
 void show_task_status(void)
 {
@@ -72,6 +97,7 @@ void schedule(void)
 	}
 	
 	printk("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
+/*
         struct {long a, b;} tmp; 
         if (current == next) 
                 return ;
@@ -80,6 +106,7 @@ void schedule(void)
         asm("movw %%dx, %1\n\t" 
                 "ljmp %0\n"
                 ::"m"(*&tmp.a), "m"(*&tmp.b), "d"(next->tss_sel));
+*/
 }
 
 void init_schedule(void)
@@ -93,14 +120,6 @@ void init_schedule(void)
         /* setup code & data segment selector in the ldt. */
         set_gdt_desc(&(init_task.ldt), CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(&(init_task.ldt), DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
-/*
-        init_task.ldt[0].a = 0;
-        init_task.ldt[0].b = 0;
-        init_task.ldt[1].a = 0x9f;
-        init_task.ldt[1].b = 0xc0fa00;
-        init_task.ldt[2].a = 0x9f;
-        init_task.ldt[2].b = 0xc0f200;
-*/
 
         /* move init_task to the task list. */
         list_add_tail(&(init_task.list), &task_list_head);

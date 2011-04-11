@@ -67,10 +67,10 @@ int setup_task_pages(struct task_struct *tsk)
 
 void *alloc_page(void)
 {
-	int i = PAGE_NUM -1;
+	int i;
 
-	for (; i > KERNEL_MEM_MAP; i--) {
-		if (mem_map[i] == 0) {
+	for (i = KERNEL_MEM_MAP + 1; i < PAGE_NUM - 1; i++) {
+		if (mem_map[i] == MEM_UNUSED) {
 			mem_map[i] = MEM_USED;
 			return (void *)(i << PAGE_SHIFT);
 		}
@@ -99,4 +99,6 @@ void init_mm(void)
 
 	for (; i < PAGE_NUM; i++)
 		mem_map[i] = MEM_UNUSED;
+
+	printk("kernel page: %d\ttotal page: %d\n", KERNEL_MEM_MAP, PAGE_NUM);
 }

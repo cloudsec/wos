@@ -39,6 +39,6 @@ void do_timer(unsigned int esp)
 		return ;
 	}
 
-	//printk("%s counter is 0.\n", current->task_name);
+	//printk("pid: %d counter is 0.\n", current->pid);
 	schedule();
 }

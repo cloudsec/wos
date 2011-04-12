@@ -7,6 +7,7 @@
 extern struct task_struct init_task;
 extern void default_int(void);
 extern void run_init_task(void);
+extern void run_init_task2(void);
 
 asm(".align 16\n");
 struct gdt_desc new_gdt[8192] = {0,};
@@ -79,6 +80,8 @@ void kernel_init(void)
 	init_schedule();
 	init_timer(100);
 
+	//fork((unsigned int)run_init_task2);
+
 	sti();
 	printk("Loading Kernel Into Protect Mode OK.\n");
 	print_gdt_list();
@@ -100,6 +103,7 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 :::"ax");
+	//asm("int $0x85"::);
 	run_init_task();
 	for (;;);
 }

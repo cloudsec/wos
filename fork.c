@@ -14,7 +14,7 @@ extern int task_flag;
 
 void run_task1(void);
 
-int last_pid = 0;
+int last_pid = 1;
 
 int get_pid(void)
 {
@@ -28,7 +28,7 @@ int get_pid(void)
 	return pid;
 }
 
-int fork_task(unsigned int eip)
+int fork(unsigned int eip)
 {
 	struct task_struct *tsk;
 	int pid;
@@ -39,6 +39,7 @@ int fork_task(unsigned int eip)
 		return -1;
 	}
 	printk("pid: %d\n", pid);
+	printk("%d\n", sizeof(struct task_struct));
 
 	tsk = (struct task_struct *)alloc_page();
 	if (!tsk) {
@@ -47,14 +48,16 @@ int fork_task(unsigned int eip)
 	}
 	printk("Alloc tsk page at: 0x%x\n", tsk);
 
-	*tsk = *current;
+	memcpy((void *)tsk, (void *)&init_task, sizeof(struct task_struct));
+
 	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE - 1;
 	tsk->tss.esp = (unsigned int)alloc_page() + PAGE_SIZE - 1;
 	tsk->tss.eip = eip;
-	tsk->tss.eflags = 0x3202;
+	//tsk->tss.eflags = 0x3202;
+	tsk->tss.eflags = 0x10202;
 	tsk->tss.ldt_sel = TSS_SEL(pid);
 	printk("Alloc stack page at: 0x%x\n", tsk->tss.esp - PAGE_SIZE + 1);
-	printk("%d\n", tsk->tss.cr3);
+	printk("cr3: %d\n", tsk->tss.cr3);
 	printk("0x%x, 0x%x\n", tsk->tss.cs, tsk->tss.ds);
 
 	tsk->pid = pid;
@@ -64,6 +67,8 @@ int fork_task(unsigned int eip)
 	tsk->state = TASK_STOP;
 	tsk->counter = DEFAULT_COUNTER;
 	tsk->priority = DEFAULT_PRIORITY;
+
+	printk("tss: %x, ldt: %x\n", tsk->tss_sel, tsk->ldt_sel);
 
 	//setup_task_pages(tsk);
 
@@ -77,4 +82,7 @@ int fork_task(unsigned int eip)
 
 	list_add_tail(&(tsk->list), &task_list_head);
 	tsk->state = TASK_RUNABLE;
+
+	//set_cr3(tsk->tss.cr3);
+	invalidate();
 }

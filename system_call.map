@@ -1,0 +1,97 @@
+GAS LISTING system_call.s 			page 1
+
+
+   1              	.globl system_call
+   2              	.align 2
+   3              	
+   4              	nr_system_calls = 2
+   5              	
+   6              	.macro SAVE_ALL
+   7              	        push %fs
+   8              	        push %es
+   9              	        push %ds
+  10              	        pushl %eax
+  11              	        pushl %ebp
+  12              	        pushl %edi
+  13              	        pushl %esi
+  14              	        pushl %edx
+  15              	        pushl %ecx
+  16              	        pushl %ebx
+  17              	.endm
+  18              	
+  19              	.macro RESTORE_ALL
+  20              	        popl %ebx
+  21              	        popl %ecx
+  22              	        popl %edx
+  23              	        popl %esi
+  24              	        popl %edi
+  25              	        popl %ebp
+  26              	        popl %eax
+  27              	        pop %ds
+  28              	        pop %es
+  29              		pop %fs
+  30              	.endm
+  31              	      
+  32              	/*
+  33              	system_call:
+  34              		cmpl $nr_system_calls - 1, %eax
+  35              		ja bad_sys_call
+  36              		pushl %eax
+  37              		SAVE_ALL
+  38              		movw $0x10, %ax
+  39              		movw %ax, %ds
+  40              		movw %ax, %es
+  41              		movw %ax, %fs
+  42              		call sys_call_table(, %eax, 4)
+  43              		RESTORE_ALL
+  44              		addl $4, %esp
+  45              		iret
+  46              	*/
+  47              	system_call:
+  48 0000 0FA0061E 	        SAVE_ALL
+  48      50555756 
+  48      525153
+  49 000b 66B81000 	        movw $0x10, %ax
+  50 000f 8ED8     	        movw %ax, %ds
+  51 0011 8EC0     	        movw %ax, %es
+  52 0013 8EE0     	        movw %ax, %fs
+  53 0015 683C0000 		pushl $test_msg
+  53      00
+  54 001a E8FCFFFF 		call printk
+GAS LISTING system_call.s 			page 2
+
+
+  54      FF
+  55 001f 83C404   		addl $4, %esp
+  56 0022 5B595A5E 	        RESTORE_ALL
+  56      5F5D581F 
+  56      070FA1
+  57 002d CF       	        iret
+  58              	
+  59              	bad_sys_call:
+  60 002e B8FFFFFF 		movl $-1, %eax
+  60      FF
+  61 0033 CF       		iret
+  62              	
+  63              	sys_call_table:
+  64 0034 00000000 		.long sys_write
+  65 0038 00000000 		.long 0
+  66              	
+  67              	test_msg:
+  68 003c 696E2073 		.asciz "in system call."
+  68      79737465 
+  68      6D206361 
+  68      6C6C2E00 
+GAS LISTING system_call.s 			page 3
+
+
+DEFINED SYMBOLS
+       system_call.s:47     .text:0000000000000000 system_call
+       system_call.s:4      *ABS*:0000000000000002 nr_system_calls
+       system_call.s:67     .text:000000000000003c test_msg
+       system_call.s:59     .text:000000000000002e bad_sys_call
+       system_call.s:63     .text:0000000000000034 sys_call_table
+
+UNDEFINED SYMBOLS
+printk
+sys_write

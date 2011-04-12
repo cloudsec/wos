@@ -33,6 +33,7 @@ extern void page_fault();
 extern void timer_interrupt();
 extern void parallel_interrupt();
 extern void keyboard_interrupt();
+extern void system_call();
 
 struct idt_desc {
         unsigned int a;
@@ -181,6 +182,8 @@ void init_trap(void)
 
 	for (i = 0x22; i <= 0x2f; i++)
 		set_system_gate((unsigned int)default_int, i);
+
+	set_system_gate((unsigned int)system_call, 0x85);
 }
 
 void io_delay(void)

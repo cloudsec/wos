@@ -15,5 +15,6 @@
 #define outb(value, port)	asm("outb %%al, %%dx\n"::"a"(value),"d"(port))
 
 #define set_cr3(value)		asm("movl %0, %%cr3\n"::"m"(value))
+#define invalidate()		asm("movl %%eax,%%cr3"::"a" (0))
 
 #endif

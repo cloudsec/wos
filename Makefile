@@ -4,7 +4,7 @@ CC	=gcc
 CFLAGS	=-pedantic -nostdlib -nostdinc -I include -fomit-frame-pointer -fno-stack-protector
 
 KERNEL_OBJS = load.o init.o fork.o sched.o memory.o traps.o trap_asm.o keyboard.o timer.o	\
-		printk.o vga.o string.o
+		system_call.o sys.o printk.o vga.o string.o
 
 .s.o:
 	${AS} -a $< -o $*.o >$*.map

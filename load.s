@@ -30,9 +30,6 @@ startup_32:
 	mov %ax, %gs
 	movl $init_stack, %esp
 
-	cli
-	call init_8259A
-
         xorl %eax, %eax
 1:      incl %eax
         movl %eax, 0x000000
@@ -55,6 +52,8 @@ pg3:
 
 	pushl $kernel_init
 	jmp setup_paging
+2:
+	jmp 2b
 
 .align 2
 setup_paging:

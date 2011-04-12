@@ -47,8 +47,7 @@ int fork_task(unsigned int eip)
 	}
 	printk("Alloc tsk page at: 0x%x\n", tsk);
 
-	memcpy(tsk, &init_task, sizeof(struct task_struct));
-
+	*tsk = *current;
 	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE - 1;
 	tsk->tss.esp = (unsigned int)alloc_page() + PAGE_SIZE - 1;
 	tsk->tss.eip = eip;
@@ -69,59 +68,13 @@ int fork_task(unsigned int eip)
 	//setup_task_pages(tsk);
 
         /* setup tss & ldt in the gdt.*/
-        set_tss_desc(&new_gdt, &(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));
-        set_ldt_desc(&new_gdt, &(tsk->ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(pid));
+        set_tss_desc(new_gdt, (unsigned int)&(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));
+        set_ldt_desc(new_gdt, (unsigned int)&(tsk->ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(pid));
 
         /* setup code & data segment selector in the ldt. */
-        set_gdt_desc(&(tsk->ldt), CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
-        set_gdt_desc(&(tsk->ldt), DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
+        set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
+        set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
 
 	list_add_tail(&(tsk->list), &task_list_head);
 	tsk->state = TASK_RUNABLE;
-}
-
-void run_task1(void)
-{
-        char c = 'B';
-        int x = 0;
-
-	int *s = (unsigned int *)0xc000000;
-
-	*s = 1;
-	
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x0c, %%ah\n\t"
-                        "movb %0, %%al\n\t"
-                        "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
-}
-
-void run_task2(void)
-{
-        char c = 'C';
-        int x = 0;
-
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x0c, %%ah\n\t"
-                        "movb %0, %%al\n\t"
-                        "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
 }

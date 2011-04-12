@@ -6,23 +6,6 @@ extern void io_delay(void);
 
 unsigned int timer_tick = 0;
 
-void init_timer(int hz)
-{
-        unsigned int divisor = 1193180 / hz;
-
-	outb(0x36, 0x43);
-	io_delay();
-
-	outb(divisor&0xff, 0x40);
-	io_delay();
-
-	outb(divisor>>8, 0x40);
-	io_delay();
-	
-	outb(inb(0x21)&0xfe, 0x21);
-	io_delay();
-}
-
 void do_timer(unsigned int esp)
 {
 	struct regs *reg = (struct regs *)esp;
@@ -41,4 +24,21 @@ void do_timer(unsigned int esp)
 
 	//printk("pid: %d counter is 0.\n", current->pid);
 	schedule();
+}
+
+void init_timer(int hz)
+{
+        unsigned int divisor = 1193180 / hz;
+
+        outb(0x36, 0x43);
+        io_delay();
+
+        outb(divisor&0xff, 0x40);
+        io_delay();
+
+        outb(divisor>>8, 0x40);
+        io_delay();
+
+        outb(inb(0x21)&0xfe, 0x21);
+        io_delay();
 }

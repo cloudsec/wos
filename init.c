@@ -15,14 +15,14 @@ unsigned int gdt_desc_idx = KERNEL_CODE_IDX;
 void __set_gdt_desc(struct gdt_desc *addr, unsigned int base, unsigned int limit, 
 		int type_h, int type, int idx)
 {
-	struct gdt_desc *gdt = addr;
+	struct gdt_desc *gdt = addr + idx;
 	unsigned int a, b;
 
-	gdt[idx].a = (base << 16) | (0x0000ffff & limit);
+	gdt->a = (base << 16) | (0x0000ffff & limit);
 
 	a = ((base >> 16) & 0x00ff) | (type << 8);
 	b = (base & 0xff000000) | (type_h << 20) | (limit & 0x000f0000);
-	gdt[idx].b = a | b;
+	gdt->b = a | b;
 }
 
 void set_gdt_desc(struct gdt_desc *addr, unsigned int base, unsigned int limit, 
@@ -45,9 +45,9 @@ void set_tss_desc(struct gdt_desc *addr, unsigned int base, unsigned int limit,
 
 void setup_gdt(void)
 {
-	set_gdt_desc(&new_gdt, CODE_BASE, CODE_LIMIT, KERNEL_CODE_TYPE, KERNEL_CODE_IDX);
-	set_gdt_desc(&new_gdt, DATA_BASE, DATA_LIMIT, KERNEL_DATA_TYPE, KERNEL_DATA_IDX);
-	set_gdt_desc(&new_gdt, VIDEO_BASE, VIDEO_LIMIT, VIDEO_TYPE, VIDEO_IDX);
+	set_gdt_desc(new_gdt, CODE_BASE, CODE_LIMIT, KERNEL_CODE_TYPE, KERNEL_CODE_IDX);
+	set_gdt_desc(new_gdt, DATA_BASE, DATA_LIMIT, KERNEL_DATA_TYPE, KERNEL_DATA_IDX);
+	set_gdt_desc(new_gdt, VIDEO_BASE, VIDEO_LIMIT, VIDEO_TYPE, VIDEO_IDX);
 }
 
 void print_init_ldt_list(void)
@@ -71,19 +71,17 @@ void print_gdt_list(void)
 void kernel_init(void)
 {
 	init_vga();
+	init_8259A();
 	init_mm();
 	init_trap();
-	init_keyboard();
+	/* the keyboard has some bug may genterate an GP protection. */
+	//init_keyboard();
 	init_schedule();
-	init_timer();
-
-	printk("Loading Kernel Into Protect Mode OK.\n");
-	print_gdt_list();
-	//print_init_ldt_list();
-
-	fork_task((unsigned int)run_init_task);
+	init_timer(100);
 
 	sti();
+	printk("Loading Kernel Into Protect Mode OK.\n");
+	print_gdt_list();
 	printk("Move to ring3, start init task.\n");
         asm("pushfl\n\t"
                 "andl $0xffffbfff, (%%esp)\n\t"
@@ -102,6 +100,6 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 :::"ax");
-	//run_init_task();
+	run_init_task();
 	for (;;);
 }

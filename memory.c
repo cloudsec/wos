@@ -99,6 +99,4 @@ void init_mm(void)
 
 	for (; i < PAGE_NUM; i++)
 		mem_map[i] = MEM_UNUSED;
-
-	printk("kernel page: %d\ttotal page: %d\n", KERNEL_MEM_MAP, PAGE_NUM);
 }

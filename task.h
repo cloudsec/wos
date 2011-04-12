@@ -41,7 +41,6 @@ struct task_struct {
 	int state;
 	int counter;
 	int priority;
-	char task_name[32];
 	struct list_head list;
 };
 
@@ -75,7 +74,7 @@ struct regs {
 #define TASK_RUNNING		2	
 
 #define DEFAULT_PRIORITY	200
-#define DEFAULT_COUNTER		2000
+#define DEFAULT_COUNTER		4000
 
 #define MAX_PID			1024
 

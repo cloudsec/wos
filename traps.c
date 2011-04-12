@@ -53,7 +53,7 @@ void setup_idt(void)
         int i;
 
         for (i = 0; i < 256; i++)
-		set_intr_gate(default_int, i);
+		set_intr_gate((unsigned int)default_int, i);
 }
 
 void panic(char *msg, unsigned int esp)
@@ -157,30 +157,30 @@ void init_trap(void)
 {
 	int i = 0;
 
-	set_trap_gate(divide_error, 0);
-	set_trap_gate(debug, 1);
-	set_trap_gate(nmi, 2);
-	set_system_gate(int3, 3);
-	set_system_gate(overflow, 4);
-	set_system_gate(bounds, 5);
-	set_trap_gate(invalid_op, 6);
-	set_trap_gate(device_not_available, 7);
-	set_trap_gate(coprocessor_segment_overrun, 9);
-	set_trap_gate(page_fault, 14);
-	set_trap_gate(reserved, 15);
-	set_trap_gate(irq13, 45);
+	set_trap_gate((unsigned int)divide_error, 0);
+	set_trap_gate((unsigned int)debug, 1);
+	set_trap_gate((unsigned int)nmi, 2);
+	set_system_gate((unsigned int)int3, 3);
+	set_system_gate((unsigned int)overflow, 4);
+	set_system_gate((unsigned int)bounds, 5);
+	set_trap_gate((unsigned int)invalid_op, 6);
+	set_trap_gate((unsigned int)device_not_available, 7);
+	set_trap_gate((unsigned int)coprocessor_segment_overrun, 9);
+	set_trap_gate((unsigned int)page_fault, 14);
+	set_trap_gate((unsigned int)reserved, 15);
+	set_trap_gate((unsigned int)irq13, 45);
 
-	set_trap_gate(double_fault, 8);
-	set_trap_gate(invalid_TSS, 10);
-	set_trap_gate(segment_not_present, 11);
-	set_trap_gate(stack_segment, 12);
-	set_trap_gate(general_protection, 13);
+	set_trap_gate((unsigned int)double_fault, 8);
+	set_trap_gate((unsigned int)invalid_TSS, 10);
+	set_trap_gate((unsigned int)segment_not_present, 11);
+	set_trap_gate((unsigned int)stack_segment, 12);
+	set_trap_gate((unsigned int)general_protection, 13);
 
-	set_intr_gate(timer_interrupt, 32);
-	set_intr_gate(keyboard_interrupt, 33);
+	set_intr_gate((unsigned int)timer_interrupt, 32);
+	set_intr_gate((unsigned int)keyboard_interrupt, 33);
 
 	for (i = 0x22; i <= 0x2f; i++)
-		set_system_gate(default_int, i);
+		set_system_gate((unsigned int)default_int, i);
 }
 
 void io_delay(void)

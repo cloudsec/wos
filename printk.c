@@ -64,7 +64,7 @@ int vfprintf(char *format, va_list arg)
                         break;
 		case 's':
 			if (flag) {
-				const char *str = va_arg(arg, char*);
+				char *str = va_arg(arg, char*);
 				flag = 0;
 				
 				put_s(str);
@@ -77,7 +77,7 @@ int vfprintf(char *format, va_list arg)
 			break;
                 case 'c':
                         if (flag) {
-                                const char s = va_arg(arg, char);
+                                char s = va_arg(arg, char);
                                 flag = 0;
 
                                 put_c(s);
@@ -127,7 +127,7 @@ int vfprintf(char *format, va_list arg)
 	return ret;
 }
 
-int printk(const char *format, ...)
+int printk(char *format, ...)
 {
 	va_list arg;
 	va_start(arg, format);

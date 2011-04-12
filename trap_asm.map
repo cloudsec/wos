@@ -38,11 +38,11 @@ GAS LISTING trap_asm.s 			page 1
   35              	
   36              	.align 2
   37              	divide_error:
-  38 0000 6A01     		push $1
+  38 0000 6A00     		push $0
   39 0002 0FA0061E 		SAVE_ALL
   39      50555756 
   39      525153
-  40 000d 54       		push %esp
+  40 000d 54       		pushl %esp
   41 000e 66B81000 		movw $0x10, %ax
   42 0012 8ED8     		movw %ax, %ds
   43 0014 8EC0     		movw %ax, %es
@@ -65,7 +65,7 @@ GAS LISTING trap_asm.s 			page 1
   54 0032 0FA0061E 	        SAVE_ALL
   54      50555756 
   54      525153
-  55 003d 54       		push %esp
+  55 003d 54       		pushl %esp
   56 003e 66B81000 		movw $0x10, %ax
   57 0042 8ED8     		movw %ax, %ds
   58 0044 8EC0     		movw %ax, %es
@@ -85,7 +85,7 @@ GAS LISTING trap_asm.s 			page 1
   69 0062 0FA0061E 	        SAVE_ALL
   69      50555756 
   69      525153
-  70 006d 54       		push %esp
+  70 006d 54       		pushl %esp
   71 006e 66B81000 		movw $0x10, %ax
   72 0072 8ED8     		movw %ax, %ds
   73 0074 8EC0     		movw %ax, %es
@@ -105,7 +105,7 @@ GAS LISTING trap_asm.s 			page 1
   84 0092 0FA0061E 	        SAVE_ALL
   84      50555756 
   84      525153
-  85 009d 54       		push %esp
+  85 009d 54       		pushl %esp
   86 009e 66B81000 		movw $0x10, %ax
   87 00a2 8ED8     		movw %ax, %ds
   88 00a4 8EC0     		movw %ax, %es
@@ -128,7 +128,7 @@ GAS LISTING trap_asm.s 			page 1
   99 00c2 0FA0061E 	        SAVE_ALL
   99      50555756 
   99      525153
- 100 00cd 54       		push %esp
+ 100 00cd 54       		pushl %esp
  101 00ce 66B81000 		movw $0x10, %ax
  102 00d2 8ED8     		movw %ax, %ds
  103 00d4 8EC0     		movw %ax, %es
@@ -148,7 +148,7 @@ GAS LISTING trap_asm.s 			page 1
  114 00f2 0FA0061E 	        SAVE_ALL
  114      50555756 
  114      525153
- 115 00fd 54       		push %esp
+ 115 00fd 54       		pushl %esp
  116 00fe 66B81000 		movw $0x10, %ax
  117 0102 8ED8     		movw %ax, %ds
  118 0104 8EC0     		movw %ax, %es
@@ -168,7 +168,7 @@ GAS LISTING trap_asm.s 			page 1
  129 0122 0FA0061E 	        SAVE_ALL
  129      50555756 
  129      525153
- 130 012d 54       		push %esp
+ 130 012d 54       		pushl %esp
  131 012e 66B81000 		movw $0x10, %ax
  132 0132 8ED8     		movw %ax, %ds
  133 0134 8EC0     		movw %ax, %es
@@ -191,7 +191,7 @@ GAS LISTING trap_asm.s 			page 1
  144 0152 0FA0061E 	        SAVE_ALL
  144      50555756 
  144      525153
- 145 015d 54       		push %esp
+ 145 015d 54       		pushl %esp
  146 015e 66B81000 		movw $0x10, %ax
  147 0162 8ED8     		movw %ax, %ds
  148 0164 8EC0     		movw %ax, %es
@@ -211,7 +211,7 @@ GAS LISTING trap_asm.s 			page 1
  159 0182 0FA0061E 	        SAVE_ALL
  159      50555756 
  159      525153
- 160 018d 54       		push %esp
+ 160 018d 54       		pushl %esp
  161 018e 66B81000 		movw $0x10, %ax
  162 0192 8ED8     		movw %ax, %ds
  163 0194 8EC0     		movw %ax, %es
@@ -231,7 +231,7 @@ GAS LISTING trap_asm.s 			page 1
  174 01b2 0FA0061E 	        SAVE_ALL
  174      50555756 
  174      525153
- 175 01bd 54       		push %esp
+ 175 01bd 54       		pushl %esp
  176 01be 66B81000 		movw $0x10, %ax
  177 01c2 8ED8     		movw %ax, %ds
  178 01c4 8EC0     		movw %ax, %es
@@ -254,7 +254,7 @@ GAS LISTING trap_asm.s 			page 1
  189 01e2 0FA0061E 	        SAVE_ALL
  189      50555756 
  189      525153
- 190 01ed 54       	        push %esp
+ 190 01ed 54       	        pushl %esp
  191 01ee 66B81000 		movw $0x10, %ax
  192 01f2 8ED8     		movw %ax, %ds
  193 01f4 8EC0     		movw %ax, %es
@@ -274,7 +274,7 @@ GAS LISTING trap_asm.s 			page 1
  204 0212 0FA0061E 	        SAVE_ALL
  204      50555756 
  204      525153
- 205 021d 54       		push %esp
+ 205 021d 54       		pushl %esp
  206 021e 66B81000 		movw $0x10, %ax
  207 0222 8ED8     		movw %ax, %ds
  208 0224 8EC0     		movw %ax, %es
@@ -322,7 +322,7 @@ GAS LISTING trap_asm.s 			page 1
  239 0272 0FA0061E 	        SAVE_ALL
  239      50555756 
  239      525153
- 240 027d 54       	        push %esp
+ 240 027d 54       	        pushl %esp
  241 027e 66B81000 		movw $0x10, %ax
  242 0282 8ED8     		movw %ax, %ds
  243 0284 8EC0     		movw %ax, %es
@@ -340,7 +340,7 @@ GAS LISTING trap_asm.s 			page 1
  252 029c 0FA0061E 	        SAVE_ALL
  252      50555756 
  252      525153
- 253 02a7 54       	        push %esp
+ 253 02a7 54       	        pushl %esp
  254 02a8 66B81000 		movw $0x10, %ax
  255 02ac 8ED8     		movw %ax, %ds
  256 02ae 8EC0     		movw %ax, %es
@@ -361,7 +361,7 @@ GAS LISTING trap_asm.s 			page 1
 GAS LISTING trap_asm.s 			page 7
 
 
- 266 02d1 54       	        push %esp
+ 266 02d1 54       	        pushl %esp
  267 02d2 66B81000 		movw $0x10, %ax
  268 02d6 8ED8     		movw %ax, %ds
  269 02d8 8EC0     		movw %ax, %es
@@ -379,7 +379,7 @@ GAS LISTING trap_asm.s 			page 1
  278 02f0 0FA0061E 	        SAVE_ALL
  278      50555756 
  278      525153
- 279 02fb 54       	        push %esp
+ 279 02fb 54       	        pushl %esp
  280 02fc 66B81000 		movw $0x10, %ax
  281 0300 8ED8     		movw %ax, %ds
  282 0302 8EC0     		movw %ax, %es
@@ -397,7 +397,7 @@ GAS LISTING trap_asm.s 			page 1
  291 031a 0FA0061E 	        SAVE_ALL
  291      50555756 
  291      525153
- 292 0325 54       	        push %esp
+ 292 0325 54       	        pushl %esp
  293 0326 66B81000 		movw $0x10, %ax
  294 032a 8ED8     		movw %ax, %ds
  295 032c 8EC0     		movw %ax, %es
@@ -415,7 +415,7 @@ GAS LISTING trap_asm.s 			page 1
  304 0344 0FA0061E 	        SAVE_ALL
  304      50555756 
  304      525153
- 305 034f 54       	        push %esp
+ 305 034f 54       	        pushl %esp
  306 0350 66B81000 		movw $0x10, %ax
  307 0354 8ED8     		movw %ax, %ds
 GAS LISTING trap_asm.s 			page 8

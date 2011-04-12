@@ -56,9 +56,11 @@ struct regs {
         unsigned int es;
         unsigned int fs;
         unsigned int error_code;
-        unsigned int orig_ip;
+        unsigned int orig_eip;
         unsigned int orig_cs;
         unsigned int eflags;
+	unsigned int esp;
+	unsigned int ss;
 };
 
 #define TSS_SEL_BASE		4

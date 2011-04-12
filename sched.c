@@ -60,29 +60,12 @@ struct task_struct init_task1 = {
 
 void run_init_task(void)
 {
-	int i = 0;
+	char *s = "A";
+	//for (;;)
+		asm("movl $0, %%eax\n\tmovl %0, %%ebx\n\tint $0x85"::"m"(s));
 	
-	for (;;)
-		asm("int $0x85"::);
-/*
-        char c = 'A';
-        int x = 0;
-
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x07, %%ah\n\t"
-                        "movb %0, %%al\n\t"
-                        "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
-*/
+	asm("movl $1, %%eax\n\tint $0x85"::);
+	for (;;);
 }
 
 void run_init_task1(void)
@@ -96,6 +79,7 @@ void run_init_task1(void)
                         continue;
                 }
 
+		x = 2;
                 asm("movw $0x18, %%ax\n\t"
                         "movw %%ax, %%gs\n\t"
                         "movb $0x07, %%ah\n\t"
@@ -188,18 +172,8 @@ void schedule(void)
 		counter = -1;
 	}
 	
-	switch_task(next)
-/*
-        struct {long a, b;} tmp; 
-        if (current == next) 
-                return ;
-        current = next;
-
 	printk("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
-        asm("movw %%dx, %1\n\t" 
-                "ljmp %0\n"
-                ::"m"(*&tmp.a), "m"(*&tmp.b), "d"(next->tss_sel));
-*/
+	switch_task(next)
 }
 
 void init_schedule(void)

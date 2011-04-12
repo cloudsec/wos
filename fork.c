@@ -28,18 +28,20 @@ int get_pid(void)
 	return pid;
 }
 
-int fork(unsigned int eip)
+int do_fork(unsigned int esp)
 {
+	struct regs *reg = (struct regs *)(esp + 4);
 	struct task_struct *tsk;
 	int pid;
 
+	printk("cs: 0x%x, eip: 0x%x, error_code: 0x%x, ds: 0x%x\n", 
+		reg->orig_cs, reg->orig_eip, reg->error_code, reg->ds);
 	pid = get_pid();
 	if (pid == -1) {
 		printk("Get pid failed.\n");
 		return -1;
 	}
 	printk("pid: %d\n", pid);
-	printk("%d\n", sizeof(struct task_struct));
 
 	tsk = (struct task_struct *)alloc_page();
 	if (!tsk) {
@@ -51,38 +53,43 @@ int fork(unsigned int eip)
 	memcpy((void *)tsk, (void *)&init_task, sizeof(struct task_struct));
 
 	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE - 1;
-	tsk->tss.esp = (unsigned int)alloc_page() + PAGE_SIZE - 1;
-	tsk->tss.eip = eip;
-	//tsk->tss.eflags = 0x3202;
-	tsk->tss.eflags = 0x10202;
+	tsk->tss.eip = reg->orig_eip;
+	tsk->tss.eflags = reg->eflags;
 	tsk->tss.ldt_sel = TSS_SEL(pid);
-	printk("Alloc stack page at: 0x%x\n", tsk->tss.esp - PAGE_SIZE + 1);
-	printk("cr3: %d\n", tsk->tss.cr3);
-	printk("0x%x, 0x%x\n", tsk->tss.cs, tsk->tss.ds);
-
-	tsk->pid = pid;
-
+	tsk->tss.cr3 = 0;
+	tsk->tss.eax = 0;
+	tsk->tss.ebx = reg->ebx;
+	tsk->tss.ecx = reg->ecx;
+	tsk->tss.edx = reg->edx;
+	tsk->tss.edx = reg->edx;
+	tsk->tss.esp = reg->esp;
+	tsk->tss.esi = reg->esi;
+	tsk->tss.edi = reg->edi;
+	tsk->tss.cs = reg->orig_cs;
+	tsk->tss.ds = reg->ds;
+	tsk->tss.es = reg->es;
+	tsk->tss.fs = reg->fs;
+	
 	tsk->tss_sel = TSS_SEL(pid);
 	tsk->ldt_sel = LDT_SEL(pid);
+	tsk->pid = pid;
 	tsk->state = TASK_STOP;
 	tsk->counter = DEFAULT_COUNTER;
 	tsk->priority = DEFAULT_PRIORITY;
 
-	printk("tss: %x, ldt: %x\n", tsk->tss_sel, tsk->ldt_sel);
-
-	//setup_task_pages(tsk);
-
         /* setup tss & ldt in the gdt.*/
-        set_tss_desc(new_gdt, (unsigned int)&(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));
-        set_ldt_desc(new_gdt, (unsigned int)&(tsk->ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(pid));
+        set_tss_desc(new_gdt, (unsigned int)&(tsk->tss), TSS_LIMIT, TSS_TYPE, 
+		TSS_IDX(pid));
+        set_ldt_desc(new_gdt, (unsigned int)&(tsk->ldt), LDT_LIMIT, LDT_TYPE, 
+		LDT_IDX(pid));
 
         /* setup code & data segment selector in the ldt. */
         set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
 
-	list_add_tail(&(tsk->list), &task_list_head);
 	tsk->state = TASK_RUNABLE;
+	list_add_tail(&(tsk->list), &task_list_head);
 
-	//set_cr3(tsk->tss.cr3);
 	invalidate();
+	return 0;
 }

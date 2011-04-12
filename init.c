@@ -80,8 +80,6 @@ void kernel_init(void)
 	init_schedule();
 	init_timer(100);
 
-	//fork((unsigned int)run_init_task2);
-
 	sti();
 	printk("Loading Kernel Into Protect Mode OK.\n");
 	print_gdt_list();
@@ -103,7 +101,7 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 :::"ax");
-	//asm("int $0x85"::);
+	//asm("movl $0, %%eax\n\tint $0x85"::);
 	run_init_task();
 	for (;;);
 }

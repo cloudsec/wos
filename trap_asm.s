@@ -35,9 +35,9 @@
 
 .align 2
 divide_error:
-	push $1
+	push $0
 	SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -52,7 +52,7 @@ divide_error:
 debug:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -67,7 +67,7 @@ debug:
 nmi:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -82,7 +82,7 @@ nmi:
 int3:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -97,7 +97,7 @@ int3:
 overflow:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -112,7 +112,7 @@ overflow:
 bounds:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -127,7 +127,7 @@ bounds:
 invalid_op:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -142,7 +142,7 @@ invalid_op:
 coprocessor_segment_overrun:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -157,7 +157,7 @@ coprocessor_segment_overrun:
 reserved:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -172,7 +172,7 @@ reserved:
 irq13:
         push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -187,7 +187,7 @@ irq13:
 device_not_available:
         push $0
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -202,7 +202,7 @@ device_not_available:
 timer_interrupt:
 	push $0
         SAVE_ALL
-	push %esp
+	pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -237,7 +237,7 @@ parallel_interrupt:
 .align 2
 double_fault:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -250,7 +250,7 @@ double_fault:
 .align 2
 invalid_TSS:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -263,7 +263,7 @@ invalid_TSS:
 .align 2
 segment_not_present:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -276,7 +276,7 @@ segment_not_present:
 .align 2
 stack_segment:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -289,7 +289,7 @@ stack_segment:
 .align 2
 general_protection:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
@@ -302,7 +302,7 @@ general_protection:
 .align 2
 page_fault:
         SAVE_ALL
-        push %esp
+        pushl %esp
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es

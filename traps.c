@@ -63,7 +63,7 @@ void panic(char *msg, unsigned int esp)
 
 	printk("Interrupt [%s] Error:\n===============================\n", msg);
 	printk("Error code: 0x%x\n", reg->error_code);
-	printk("EIP: 0x%x, EFLAGS: 0x%x\n", reg->orig_ip, reg->eflags);
+	printk("EIP: 0x%x, EFLAGS: 0x%x\n", reg->orig_eip, reg->eflags);
 	printk("General Registers:\n==================================\n");
 	printk("eax: 0x%x, ebx: 0x%x, ecx: 0x%x, edx: 0x%x\n",
 		reg->eax, reg->ebx, reg->ecx, reg->edx);

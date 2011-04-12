@@ -29,39 +29,45 @@ nr_system_calls = 2
 	pop %fs
 .endm
       
-/*
+.align 2
+reschedule:
+	pushl $ret_from_sys_call
+	jmp schedule
+
+.align 2
 system_call:
 	cmpl $nr_system_calls - 1, %eax
 	ja bad_sys_call
-	pushl %eax
+	pushl $0
 	SAVE_ALL
+	pushl %eax
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	movw %ax, %fs
+	popl %eax
 	call sys_call_table(, %eax, 4)
+	movl current, %eax
+	cmpl $0, 150(%eax)
+	je reschedule
+ret_from_sys_call:
 	RESTORE_ALL
 	addl $4, %esp
 	iret
-*/
-system_call:
-        SAVE_ALL
-        movw $0x10, %ax
-        movw %ax, %ds
-        movw %ax, %es
-        movw %ax, %fs
-	pushl $test_msg
-	call printk
-	addl $4, %esp
-        RESTORE_ALL
-        iret
 
 bad_sys_call:
 	movl $-1, %eax
 	iret
 
+sys_fork:
+	pushl %esp
+	call do_fork
+	addl $4, %esp
+	ret
+
 sys_call_table:
 	.long sys_write
+	.long sys_fork
 	.long 0
 
 test_msg:

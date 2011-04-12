@@ -1,7 +1,7 @@
 #include "gdt.h"
 #include "asm.h"
 
-int sys_write(void)
+int sys_write(char *msg)
 {
-	printk("C");
+	printk("%s", msg);
 }

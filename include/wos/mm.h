@@ -10,7 +10,7 @@
 
 #define KERNEL_MEM_SIZE			(2*1024*1024)			/* 1MB */
 #define KERNEL_MEM_MAP			KERNEL_MEM_SIZE >> PAGE_SHIFT
-#define KERNEL_PDE_NUM			4	
+#define KERNEL_PDE_NUM			16	
 
 #define MEM_RESERVED			-1
 #define MEM_UNUSED			0
@@ -31,8 +31,29 @@ struct mm_chunk {
 	struct list_head list;
 };
 
-#define MM_CHUNK_SIZE			sizeof(struct mm_chunk)
+struct mm_buddy {
+	int size;
+	int chunk_num;
+	int order;
+	int free_num;
+	struct list_head list;
+};
 
+struct mm_buddy_chunk {
+	void *chunk_pos;
+	int inuse;
+	struct list_head list;
+};
+
+#define MM_CHUNK_SIZE			sizeof(struct mm_chunk)
+#define MM_BUDDY_SIZE			sizeof(struct mm_buddy)
+#define MM_BUDDY_CHUNK_SIZE		sizeof(struct mm_buddy_chunk)
+
+#define BUDDY_CHUNK_NUM         	11
+#define BUDDY_SIZE			(DEFAULT_MEM_SIZE - KERNEL_MEM_SIZE)
+#define BUDDY_SUB_CHUNK_NUM		2
+#define BUDDY_MEM_BASE			KERNEL_MEM_SIZE
+			
 unsigned int mem_map[PAGE_NUM];
 
 void *alloc_page(int order);

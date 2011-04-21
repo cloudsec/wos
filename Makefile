@@ -4,8 +4,8 @@ CC	=gcc
 CFLAGS	=-pedantic -nostdlib -nostdinc -I include -fomit-frame-pointer -fno-stack-protector
 
 KERNEL_OBJS = boot/load.o core/init.o core/trap_asm.o core/traps.o core/timer.o core/sched.o \
-	core/fork.o core/system_call.o core/sys.o mm/memory.o mm/alloc.o mm/page_fault.o \
-	drivers/keyboard.o lib/printk.o drivers/vga.o lib/string.o
+	core/fork.o core/system_call.o core/sys.o mm/memory.o mm/alloc.o mm/buddy.o \
+	mm/page_fault.o drivers/keyboard.o lib/printk.o drivers/vga.o lib/string.o
 
 all: boot core mm lib kernel image
 boot:

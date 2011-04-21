@@ -1,8 +1,6 @@
 #ifndef STRING_H
 #define STRING_H
 
-#define NULL	0
-
 char *itoa(int num, char *str, int radix);
 int strlen(char *str);
 char *strcpy(char *dst, char *src);

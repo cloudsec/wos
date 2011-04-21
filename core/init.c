@@ -168,19 +168,10 @@ void kernel_init(void)
 	init_keyboard(); 
 
 	init_schedule();
-	//init_timer(100);
+	init_timer(100);
 	printk("Init timer ok.\n");
 
 	sti();
-	char *s;
-
-	s = kmalloc(6);
-	printk("kmalloc at 0x%x.\n", s);
-	s = kmalloc(40);
-	printk("kmalloc at 0x%x.\n", s);
-
-	for (;;);
-/*
 	printk("Start init_task.\n");
 	asm("pushl $0x17\n\t"
                 "pushl %%eax\n\t"
@@ -196,15 +187,15 @@ void kernel_init(void)
                 "movw %%ax, %%gs\n"
                 ::"a"(init_task_stack_ring3 + sizeof(init_task_stack_ring3)));
 
+/*
 	if (!fork()) {
 		write("i'm child process.\n");
 		//for (;;);
 	}
 	write("i'm father process.\n");
 	run_init_task();
-
+*/
 
 	creat_task((unsigned int)&run_init_task1);
 	run_init_task();
-*/
 }

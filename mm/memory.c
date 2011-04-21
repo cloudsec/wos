@@ -18,7 +18,7 @@ void setup_kernel_pte(void)
 	int i, j;
 	
 	//printk("!0x%x, 0x%x, 0x%x\n", *kernel_pde, kernel_pde, kernel_pte);
-	/* mmap kernel to first 16MB in memory. */
+	/* mmap kernel to first 64MB in memory. */
 	for (i = 0; i < KERNEL_PDE_NUM; i++) {
 		*(kernel_pde + i) = pte_addr | PAGE_USER_MODE;
 		kernel_pte = (unsigned int*)pte_addr;
@@ -79,8 +79,9 @@ void init_mm(void)
 	for (i = 0; i < KERNEL_MEM_MAP; i++)
 		mem_map[i] = MEM_RESERVED;
 
-	for (; i < PAGE_NUM; i++)
-		mem_map[i] = MEM_UNUSED;
+        for (; i < PAGE_NUM; i++)
+                mem_map[i] = MEM_UNUSED;
 
-	init_chunk();
+	init_buddy();
+	//init_chunk();
 }

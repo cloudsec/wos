@@ -1,4 +1,5 @@
 #include <wos/string.h>
+#include <wos/type.h>
 
 char *itoa(int num, char *str, int radix)
 {

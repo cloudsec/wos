@@ -168,32 +168,19 @@ void kernel_init(void)
 	init_keyboard(); 
 
 	init_schedule();
-	init_timer(100);
+	//init_timer(100);
 	printk("Init timer ok.\n");
 
-/*
-	printk("0x%x\n", alloc_page(2));
-	printk("0x%x\n", alloc_page(4));
-	printk("0x%x\n", alloc_page(8));
-	printk("0x%x\n", alloc_page(16));
-
-	task_clone1(&task1, (unsigned int)&run_init_task1, 
-		(unsigned int)&task1_stack0 + sizeof(task1_stack0), 
-		(unsigned int)&task1_stack3 + sizeof(task1_stack3));
-
-        task_clone2((unsigned int)&run_init_task1, 
-                (unsigned int)&task1_stack0 + sizeof(task1_stack0), 
-                (unsigned int)&task1_stack3 + sizeof(task1_stack3));
-
-        task_clone2((unsigned int)&run_init_task2, 
-                (unsigned int)&task2_stack0 + sizeof(task2_stack0), 
-                (unsigned int)&task2_stack3 + sizeof(task2_stack3));
-
-        task_clone3((unsigned int)&run_init_task1);
-        task_clone3((unsigned int)&run_init_task2);
-*/
-
 	sti();
+	char *s;
+
+	s = kmalloc(6);
+	printk("kmalloc at 0x%x.\n", s);
+	s = kmalloc(40);
+	printk("kmalloc at 0x%x.\n", s);
+
+	for (;;);
+/*
 	printk("Start init_task.\n");
 	asm("pushl $0x17\n\t"
                 "pushl %%eax\n\t"
@@ -209,6 +196,15 @@ void kernel_init(void)
                 "movw %%ax, %%gs\n"
                 ::"a"(init_task_stack_ring3 + sizeof(init_task_stack_ring3)));
 
+	if (!fork()) {
+		write("i'm child process.\n");
+		//for (;;);
+	}
+	write("i'm father process.\n");
+	run_init_task();
+
+
 	creat_task((unsigned int)&run_init_task1);
 	run_init_task();
+*/
 }

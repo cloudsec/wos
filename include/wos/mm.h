@@ -1,6 +1,8 @@
 #ifndef MM_H
 #define MM_H
 
+#include <wos/list.h>
+
 #define DEFAULT_MEM_SIZE		(64*1024*1024)			/* 64MB */
 #define PAGE_SIZE			(4*1024)			/* 4KB */
 #define PAGE_NUM			DEFAULT_MEM_SIZE / PAGE_SIZE	
@@ -21,6 +23,15 @@
 
 #define PAGE_USER_MODE			(PAGE_PRESENT | PAGE_WRITE | PAGE_USER)
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
+
+struct mm_chunk {
+	void *chunk_pos;
+	int size;
+	int inuse;
+	struct list_head list;
+};
+
+#define MM_CHUNK_SIZE			sizeof(struct mm_chunk)
 
 unsigned int mem_map[PAGE_NUM];
 

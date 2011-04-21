@@ -81,4 +81,6 @@ void init_mm(void)
 
 	for (; i < PAGE_NUM; i++)
 		mem_map[i] = MEM_UNUSED;
+
+	init_chunk();
 }

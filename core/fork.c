@@ -371,7 +371,7 @@ int do_fork(unsigned int esp)
         tsk->tss.ss2 = 0;
         tsk->tss.cr3 = pg_dir;
         //tsk->tss.eip = reg->orig_eip;
-        tsk->tss.eip = run_init_task1;
+        //tsk->tss.eip = run_init_task1;
         tsk->tss.eflags = 0x200;
         tsk->tss.eax = 0;
         tsk->tss.ebx = 0;

@@ -1,7 +1,7 @@
 .globl system_call
 .align 2
 
-nr_system_calls = 2
+nr_system_calls = 4
 
 .macro SAVE_ALL
         push %fs
@@ -72,6 +72,7 @@ sys_call_table:
 	.long sys_write
 	.long sys_fork
 	.long sys_pause
+	.long sys_creat_task
 	.long 0
 
 test_msg:

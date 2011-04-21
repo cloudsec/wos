@@ -24,6 +24,7 @@ extern unsigned int init_task_stack_ring3[1024];
 static inline _syscall0(int, fork)
 static inline _syscall0(int, pause)
 static inline _syscall1(int, write, char*, msg)
+static inline _syscall1(int, creat_task, unsigned int, eip)
 
 asm(".align 4\n");
 struct gdt_desc new_gdt[8192] = {0,};
@@ -97,7 +98,7 @@ void run_init_task(void)
                         continue;
                 }
 
-		//x = 2;
+		x = 2;
                 asm("movw $0x18, %%ax\n\t"
                         "movw %%ax, %%gs\n\t"
                         "movb $0x07, %%ah\n\t"
@@ -119,7 +120,7 @@ void run_init_task1(void)
                         continue;
                 }
 
-		//x = 4;
+		x = 4;
                 asm("movw $0x18, %%ax\n\t"
                         "movw %%ax, %%gs\n\t"
                         "movb $0x07, %%ah\n\t"
@@ -140,7 +141,7 @@ void run_init_task2(void)
                         continue;
                 }
 
-                //x = 6;
+                x = 6;
                 asm("movw $0x18, %%ax\n\t"
                         "movw %%ax, %%gs\n\t"
                         "movb $0x07, %%ah\n\t"
@@ -164,12 +165,18 @@ void kernel_init(void)
 	init_mm();
 	printk("Init mm ok.\n");
 
-	//init_keyboard(); 
+	init_keyboard(); 
+
 	init_schedule();
 	init_timer(100);
 	printk("Init timer ok.\n");
 
 /*
+	printk("0x%x\n", alloc_page(2));
+	printk("0x%x\n", alloc_page(4));
+	printk("0x%x\n", alloc_page(8));
+	printk("0x%x\n", alloc_page(16));
+
 	task_clone1(&task1, (unsigned int)&run_init_task1, 
 		(unsigned int)&task1_stack0 + sizeof(task1_stack0), 
 		(unsigned int)&task1_stack3 + sizeof(task1_stack3));
@@ -181,12 +188,9 @@ void kernel_init(void)
         task_clone2((unsigned int)&run_init_task2, 
                 (unsigned int)&task2_stack0 + sizeof(task2_stack0), 
                 (unsigned int)&task2_stack3 + sizeof(task2_stack3));
-*/
+
         task_clone3((unsigned int)&run_init_task1);
         task_clone3((unsigned int)&run_init_task2);
-
-/*
-        task_clone((unsigned int)&run_init_task1);
 */
 
 	sti();
@@ -204,5 +208,7 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 ::"a"(init_task_stack_ring3 + sizeof(init_task_stack_ring3)));
+
+	creat_task((unsigned int)&run_init_task1);
 	run_init_task();
 }

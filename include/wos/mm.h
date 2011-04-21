@@ -22,6 +22,8 @@
 #define PAGE_USER_MODE			(PAGE_PRESENT | PAGE_WRITE | PAGE_USER)
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
 
-void *alloc_page(void);
+unsigned int mem_map[PAGE_NUM];
+
+void *alloc_page(int order);
 
 #endif

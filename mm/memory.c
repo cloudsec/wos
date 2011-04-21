@@ -10,8 +10,6 @@ unsigned int pg1 = 0x102000;
 unsigned int pg2 = 0x103000;
 unsigned int pg3 = 0x104000;
 
-unsigned int mem_map[PAGE_NUM];
-
 void setup_kernel_pte(void)
 {
         unsigned int *kernel_pde = (unsigned int *)0x100000;
@@ -19,7 +17,7 @@ void setup_kernel_pte(void)
         unsigned int pte_addr = 0x101000, py_addr = 0;
 	int i, j;
 	
-	printk("!0x%x, 0x%x, 0x%x\n", *kernel_pde, kernel_pde, kernel_pte);
+	//printk("!0x%x, 0x%x, 0x%x\n", *kernel_pde, kernel_pde, kernel_pte);
 	/* mmap kernel to first 16MB in memory. */
 	for (i = 0; i < KERNEL_PDE_NUM; i++) {
 		*(kernel_pde + i) = pte_addr | PAGE_USER_MODE;
@@ -45,7 +43,7 @@ int setup_task_pages(struct task_struct *tsk)
 	unsigned int py_addr = 0, cr3;
 	int i, j;
 
-	tsk_pde = (unsigned int *)alloc_page();
+	tsk_pde = (unsigned int *)alloc_page(1);
 	if (!tsk_pde) {
 		printk("Alloc page failed.\n");
 		return -1;
@@ -54,7 +52,7 @@ int setup_task_pages(struct task_struct *tsk)
 
 	/* user task mmap 16MB memory. */
 	for (i = 0; i < 4; i++) {
-		tsk_pte = (unsigned int *)alloc_page();
+		tsk_pte = (unsigned int *)alloc_page(1);
 		if (!tsk_pte) {
 			printk("Alloc pte failed.\n");
 			return -1;
@@ -69,30 +67,6 @@ int setup_task_pages(struct task_struct *tsk)
 	
 	tsk->tss.cr3 = (unsigned int)tsk_pde;
 	return 0;
-}
-
-void *alloc_page(void)
-{
-	int i;
-
-	for (i = KERNEL_MEM_MAP + 2; i < PAGE_NUM - 1; i++) {
-		if (mem_map[i] == MEM_UNUSED) {
-			mem_map[i] = MEM_USED;
-			return (void *)(i << PAGE_SHIFT);
-		}
-	}
-
-	return NULL;
-}
-
-void do_page_fault(unsigned int esp)
-{
-	unsigned int cr2;
-
-	asm("movl %%cr2, %%eax\n":"=a"(cr2));
-	printk("Page fault at: 0x%x\n", cr2);
-
-        panic("page_fault", esp);
 }
 
 void init_mm(void)

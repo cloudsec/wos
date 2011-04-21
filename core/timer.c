@@ -19,7 +19,7 @@ void do_timer(unsigned int esp)
 		return ;
 	}
 
-	printk("pid: %d counter is 0.\n", current->pid);
+	//printk("pid: %d counter is 0.\n", current->pid);
 	schedule();
 }
 

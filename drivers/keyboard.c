@@ -156,7 +156,7 @@ void handle_backspace(unsigned char scan_code)
 
         if (v_scr_y)
                 v_scr_y--;
-/*
+
         set_cursor(v_scr_x, v_scr_y);
 
 	x = (v_scr_x * 80 + v_scr_y) * 2;
@@ -166,7 +166,6 @@ void handle_backspace(unsigned char scan_code)
 		"movl %0, %%ebx\n\t"
                 "movw %%ax, %%gs:(%%ebx)\n\t"
                 ::"m"(x));
-*/
 }
 
 void handle_tab(unsigned char scan_code)
@@ -182,7 +181,7 @@ void handle_tab(unsigned char scan_code)
 		}
 		v_scr_y -= 80;
 	}
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y);
 }
 
 void handle_enter(unsigned char scan_code)
@@ -193,7 +192,7 @@ void handle_enter(unsigned char scan_code)
 		screen_clear();
 	}
 	v_scr_y = 0;
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y); 
 }
 
 void handle_ctrl_l(unsigned char scan_code)
@@ -247,7 +246,7 @@ void handle_up(unsigned char scan_code)
 {
 	if (v_scr_x)
 		v_scr_x--;
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y);
 }
 
 void handle_pageup(unsigned char scan_code)
@@ -264,7 +263,7 @@ void handle_left(unsigned char scan_code)
 {
 	if (v_scr_y)
 		v_scr_y--;
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y);
 }
 
 void handle_mid(unsigned char scan_code)
@@ -276,7 +275,7 @@ void handle_right(unsigned char scan_code)
 {
 	if (v_scr_y < 79)
 		v_scr_y++;
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y);
 }
 
 void handle_plus(unsigned char scan_code)
@@ -293,7 +292,7 @@ void handle_down(unsigned char scan_code)
 {
 	if (v_scr_x < 24)
 		v_scr_x++;
-	/* set_cursor(v_scr_x, v_scr_y); */
+	set_cursor(v_scr_x, v_scr_y);
 }
 
 void handle_pagedown(unsigned char scan_code)

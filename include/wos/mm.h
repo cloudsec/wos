@@ -24,6 +24,8 @@
 #define PAGE_USER_MODE			(PAGE_PRESENT | PAGE_WRITE | PAGE_USER)
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
 
+#define MAX_BUDDY_CHUNK_NUM		10
+
 struct mm_chunk {
 	void *chunk_pos;
 	int size;
@@ -36,7 +38,8 @@ struct mm_buddy {
 	int chunk_num;
 	int order;
 	int free_num;
-	struct list_head list;
+	int next_free_idx;
+	void *obj[MAX_BUDDY_CHUNK_NUM];
 };
 
 struct mm_buddy_chunk {

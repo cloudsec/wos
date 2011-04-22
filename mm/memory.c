@@ -79,6 +79,7 @@ void init_mm(void)
 	for (i = 0; i < KERNEL_MEM_MAP; i++)
 		mem_map[i] = MEM_RESERVED;
 
+	i++;
         for (; i < PAGE_NUM; i++)
                 mem_map[i] = MEM_UNUSED;
 

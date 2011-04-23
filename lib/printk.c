@@ -91,8 +91,9 @@ int vfprintf(char *format, va_list arg)
         	case '\n':
                 	v_scr_x++;
                 	if (v_scr_x == 24) {
-				v_scr_x = 0;
-				screen_clear();
+				v_scr_x = 23;
+				//screen_clear();
+				screen_roll();
 			}
                 	v_scr_y = 0;
                 	set_cursor(v_scr_x, v_scr_y);
@@ -108,8 +109,9 @@ int vfprintf(char *format, va_list arg)
                 	else {
                         	v_scr_x++;
                         	if (v_scr_x == 24) {
-					v_scr_x = 0;
-					screen_clear();
+					v_scr_x = 23;
+					//screen_clear();
+					screen_roll();
 				}
                         	v_scr_y -= 80;
                 	}

@@ -21,8 +21,9 @@ void put_c(char c)
 	case '\n':
 		v_scr_x++;
 		if (v_scr_x == 24) {
-			v_scr_x = 0;
-			screen_clear();
+			v_scr_x = 23;
+			//screen_clear();
+			screen_roll();
 		}
 		v_scr_y = 0;
 		set_cursor(v_scr_x, v_scr_y);
@@ -38,8 +39,9 @@ void put_c(char c)
 		else {
 			v_scr_x++;
 			if (v_scr_x == 24) {
-				v_scr_x = 0;
-				screen_clear();
+				v_scr_x = 23;
+				//screen_clear();
+				screen_roll();
 			}
 			v_scr_y -= 80;
 		}
@@ -53,8 +55,9 @@ void put_c(char c)
 			v_scr_x++;
 			v_scr_y = 0;
 			if (v_scr_x == 24) {
-				v_scr_x = 0;
-				screen_clear();
+				v_scr_x = 23;
+				//screen_clear();
+				screen_roll();
 			}
 		}
 		else {
@@ -112,16 +115,17 @@ void screen_roll(void)
 	int src, dst;
 	int i;
 
-	for (i = 1; i <= 23; i++) {
+	for (i = 1; i <= 24; i++) {
 		src = i * 80 * 2;
 		dst = (i - 1) * 80 * 2;
 		__screen_roll(src, dst);
 	}	
+
 /*
         for (i = 0; i + 2 < 80; i += 2)
                 __put_c(0x0, 23 * 80 * 2 + i); 
 */
-
+	set_cursor(24, 0);
 }
 
 void screen_clear(void)

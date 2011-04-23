@@ -39,6 +39,7 @@ struct mm_buddy {
 	int order;
 	int free_num;
 	int next_free_idx;
+	int obj_map[MAX_BUDDY_CHUNK_NUM];
 	void *obj[MAX_BUDDY_CHUNK_NUM];
 };
 

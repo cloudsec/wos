@@ -2,6 +2,7 @@
 #define TASK_H
 
 #include <wos/list.h>
+#include <wos/gdt.h>
 
 struct tss_struct {
 	unsigned int prev_task_link;

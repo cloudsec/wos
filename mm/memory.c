@@ -84,5 +84,5 @@ void init_mm(void)
                 mem_map[i] = MEM_UNUSED;
 
 	init_buddy();
-	//init_chunk();
+	init_slab_cache();
 }

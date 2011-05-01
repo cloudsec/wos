@@ -9,27 +9,6 @@ struct list_head chunk_list_head[CHUNK_NUM];
 
 void *chunk_base;
 
-/*
-void *alloc_page(int order)
-{
-        int i, j;
-
-        for (i = KERNEL_MEM_MAP + 2; i < PAGE_NUM - 1; i++) {
-                for (j = i; j <= i + order; j++) {
-                        if (mem_map[j] != MEM_UNUSED)
-                                break;
-                }
-                if (j >= i + order) {
-                        for (j = i; j <= i + order; j++)
-                                mem_map[j] = MEM_USED;
-                        return (void *)(i << PAGE_SHIFT);
-                }
-        }
-
-        return NULL;
-}
-*/
-
 int check_chunk_size(int size)
 {
 	int i;

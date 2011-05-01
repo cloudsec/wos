@@ -24,7 +24,7 @@
 #define PAGE_USER_MODE			(PAGE_PRESENT | PAGE_WRITE | PAGE_USER)
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
 
-#define MAX_BUDDY_CHUNK_NUM		10
+#define MAX_BUDDY_CHUNK_NUM		20
 
 struct mm_chunk {
 	void *chunk_pos;
@@ -61,5 +61,6 @@ struct mm_buddy_chunk {
 unsigned int mem_map[PAGE_NUM];
 
 void *alloc_page(int order);
+void free_page(void *addr);
 
 #endif

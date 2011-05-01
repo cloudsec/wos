@@ -1,3 +1,10 @@
+/*
+ * slab.c - Slab alloctor
+ *
+ * (c) 2011	wzt http://www.cloud-sec.org
+ *
+ */
+
 #include <wos/mm.h>
 #include <wos/slab.h>
 #include <wos/task.h>

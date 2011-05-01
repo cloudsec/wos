@@ -85,5 +85,6 @@ struct list_head task_list_head;
 struct task_struct *current;
 
 int get_pid(void);
+int creat_kthread(unsigned int eip);
 
 #endif

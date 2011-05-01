@@ -14,10 +14,11 @@ void do_timer(unsigned int esp)
 
 	if (--current->counter > 0)
 		return ;
-
+/*
 	if (!(reg->orig_cs & 0x3)) {
 		return ;
 	}
+*/
 
 	//printk("pid: %d counter is 0.\n", current->pid);
 	schedule();

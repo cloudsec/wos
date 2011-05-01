@@ -1,5 +1,5 @@
 /*
- * Buddy allocte system.
+ * buddy.c - Buddy alloctor.
  *
  * (c) wzt 2011		http://www.cloud-sec.org 
  *
@@ -30,11 +30,8 @@
  *
  */
 
-
-#include <wos/mm.h>
+#include <wos/buddy.h>
 #include <wos/type.h>
-
-#define BUDDY_CHUNK_NUM		11
 
 int buddy_size[BUDDY_CHUNK_NUM] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
 
@@ -100,7 +97,6 @@ void *__alloc_page(int old_order, int new_order)
 		mm_buddy_array[new_order].obj_map[next] = 0;
 		mm_buddy_array[new_order].free_num++;
 		mm_buddy_array[new_order].obj[next - 1] = new_base;
-
 		//printk("new_base: 0x%x\n", new_base);
 	}
 
@@ -119,7 +115,7 @@ void *alloc_page(int order)
 
 	for (idx = order + 1; idx < BUDDY_CHUNK_NUM; idx++) {
 		if (mm_buddy_array[idx].free_num) {
-			//printk("alloc page from order: %d\n", idx);
+			printk("alloc page from order: %d\n", idx);
 			addr = __alloc_page(order, idx);
 			if (addr)
 				return addr;
@@ -136,19 +132,14 @@ void free_page(void *addr)
 	for (i = 0; i < BUDDY_CHUNK_NUM; i++) {
 		printk("search order: %d\n", i);
 		for (j = 0; j < mm_buddy_array[i].total_num; j++) {
-				printk("found obj: %d, %d, 0x%x, 0x%x\n", j, 
-					mm_buddy_array[i].total_num,
-					addr, mm_buddy_array[i].obj[j]);
-/*
 			if (addr == mm_buddy_array[i].obj[j]) {
-				printk("found obj: %d, %d, 0x%x, 0x%x\n", j, 
-					mm_buddy_array[i].total_num,
+				printk("found obj: %d, %d, 0x%x, 0x%x\n",
+					j, mm_buddy_array[i].total_num,
 					addr, mm_buddy_array[i].obj[j]);
 				mm_buddy_array[i].obj_map[j] = 0;
 				mm_buddy_array[i].free_num++;
 				return ;
 			}		
-*/
 		}
 	}
 
@@ -237,4 +228,11 @@ int init_buddy(void)
 	void *addr;
 	addr = alloc_page(0);
 	printk("allocte memory at 0x%x\n", addr);
+	addr = alloc_page(0);
+	printk("allocte memory at 0x%x\n", addr);
+	addr = alloc_page(0);
+	printk("allocte memory at 0x%x\n", addr);
+	addr = alloc_page(0);
+	printk("allocte memory at 0x%x\n", addr);
+	free_page(addr);	
 }

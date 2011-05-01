@@ -4,7 +4,9 @@ CFLAGS	= -I ../include -pedantic -nostdlib -nostdinc -I include -fomit-frame-poi
 
 all:
 	$(CC) $(CFLAGS) -c fork.c
+	$(CC) $(CFLAGS) -c kthread.c
 	$(CC) $(CFLAGS) -c init.c
+	$(CC) $(CFLAGS) -c gdt.c
 	$(CC) $(CFLAGS) -c sched.c
 	$(CC) $(CFLAGS) -c sys.c
 	$(CC) $(CFLAGS) -c timer.c

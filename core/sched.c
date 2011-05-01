@@ -69,7 +69,7 @@ void schedule(void)
 		counter = 0;
 	}
 	
-	//printk("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
+	printk("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
 	switch_task(next)
 	/* schedule can never get here. */
 }

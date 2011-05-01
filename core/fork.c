@@ -1,3 +1,10 @@
+/*
+ * fork.c
+ *
+ * (c) 2011	wzt http://www.cloud-sec.org
+ *
+ */
+
 #include <wos/gdt.h>
 #include <wos/asm.h>
 #include <wos/type.h>

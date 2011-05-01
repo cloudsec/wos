@@ -188,7 +188,6 @@ void kernel_init(void)
                 "movw %%ax, %%fs\n\t"
                 "movw %%ax, %%gs\n"
                 ::"a"(init_task_stack_ring3 + sizeof(init_task_stack_ring3)));
-
 	if (!fork()) {
 		write("i'm child process.\n");
 		//for (;;);

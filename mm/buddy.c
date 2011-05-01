@@ -83,24 +83,24 @@ void *__alloc_page(int old_order, int new_order)
 		}
 	}
 
-	if (next >= MAX_BUDDY_CHUNK_NUM)
+	if (next >= mm_buddy_array[new_order].total_num)
 		return NULL;
 
 	mm_buddy_array[new_order].free_num--;
 
 	base = addr = mm_buddy_array[new_order].obj[next];
-	new_base = base + (1 << old_order) * PAGE_SIZE;
+	new_base = base + (1 << new_order) * PAGE_SIZE;
 	//printk("new_base: 0x%x\n", new_base);
 
 	while (new_order > old_order) {
 		new_order--;
+		new_base -= (1 << new_order) * PAGE_SIZE;
 
 		next = ++mm_buddy_array[new_order].total_num;
 		mm_buddy_array[new_order].obj_map[next] = 0;
 		mm_buddy_array[new_order].free_num++;
 		mm_buddy_array[new_order].obj[next - 1] = new_base;
 
-		new_base += (1 << new_order) * PAGE_SIZE;
 		//printk("new_base: 0x%x\n", new_base);
 	}
 
@@ -235,25 +235,6 @@ int init_buddy(void)
 	//show_buddy_list();
 
 	void *addr;
-
 	addr = alloc_page(0);
 	printk("allocte memory at 0x%x\n", addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	//__show_buddy_list(0);
-/*
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-	free_page(addr);
-	addr = alloc_page(0);
-	printk("allocte memory at 0x%x\n", addr);
-*/
 }

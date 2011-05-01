@@ -6,6 +6,7 @@
 #define SLAB_MAX_OBJ				PAGE_SIZE / 8
 
 struct slab_cache {
+	void *slab_page;
 	int slab_size;
 	int slab_num;
 	int free_num;

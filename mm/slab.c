@@ -29,10 +29,11 @@ void show_slab_list(void)
 	int idx;
 
 	for (idx = 0; idx < SLAB_SIZE_NUM; idx++) {
-		printk("slab size: %d\tslab num: %d\tfree num: %d\n",
+		printk("slab size: %d\tslab num: %d\tfree num: %d\tslab_page: 0x%x\n",
 			slab_cache_array[idx].slab_size, 
 			slab_cache_array[idx].slab_num,
-			slab_cache_array[idx].free_num);
+			slab_cache_array[idx].free_num,
+			slab_cache_array[idx].slab_page);
 		__show_slab_list(&slab_cache_array[idx].list);
 	}
 }
@@ -54,19 +55,6 @@ void *get_slab_obj(struct slab *slab, int idx)
 	slab_cache_array[idx].free_num--;
 
 	return obj;
-}
-
-void *put_slab_obj(struct slab *slab, void *obj, int idx)
-{
-	int obj_idx;
-
-	obj_idx = (obj - slab->base) / slab_cache_array[idx].slab_size;
-	
-	slab_bufctl(slab)[obj_idx] = slab->free_idx;
-	slab->free_idx = obj_idx;
-
-	slab->free_num++;
-	slab_cache_array[idx].free_num++;
 }
 
 int check_slab_size(int size)
@@ -109,6 +97,75 @@ void *kmalloc(int size)
 	return NULL;
 }
 
+int addr_to_cache_idx(void *addr)
+{
+	unsigned int align_addr = (unsigned int)addr & 0xfffff000;
+	unsigned int base;
+	unsigned int idx;
+
+	printk("align addr: 0x%x\n", align_addr);
+	base = (unsigned int)(slab_cache_array[0].slab_page);
+	printk("base addr: 0x%x\n", base);
+
+	base = align_addr - base;
+	printk("base addr: 0x%x\n", base);
+
+	idx = base / (SLAB_NUM * PAGE_SIZE);
+	printk("cache idx: %d\n", idx);
+
+	return idx;
+}
+
+struct slab *search_slab(void *addr, struct list_head *list_head)
+{
+	struct slab *slab;
+	struct list_head *p;
+
+	if (list_empty(list_head))
+		return NULL;
+
+	list_for_each(p, list_head) {
+		slab = list_entry(p, struct slab, list);
+		if (slab && slab->base <= addr)
+			return slab;
+	}
+
+	return NULL;
+}
+
+void *put_slab_obj(struct slab *slab, void *obj, int idx)
+{
+	int obj_idx;
+
+	obj_idx = (obj - slab->base) / slab_cache_array[idx].slab_size;
+	printk("obj_idx: %d\n", obj_idx);
+	
+	slab_bufctl(slab)[obj_idx] = slab->free_idx;
+	slab->free_idx = obj_idx;
+
+	slab->free_num++;
+	slab_cache_array[idx].free_num++;
+}
+
+void *kfree(void *addr)
+{
+	struct slab *slab;
+	int cache_idx;
+
+	if (!addr)
+		return ;
+
+	cache_idx = addr_to_cache_idx(addr);
+	if (cache_idx < 0 || cache_idx >= SLAB_SIZE_NUM)
+		return ;
+
+	slab = search_slab(addr, &slab_cache_array[cache_idx].list);
+	if (!slab)
+		return ;
+
+	put_slab_obj(slab, addr, cache_idx);
+}
+
 int compute_slab_obj_num(int obj_size, int slab_size)
 {
 	return (slab_size - sizeof(struct slab)) / (obj_size + sizeof(int));
@@ -117,23 +174,24 @@ int compute_slab_obj_num(int obj_size, int slab_size)
 void __init_slab(int slab_idx, void *addr, int size, 
 		struct list_head *list_head)
 {
-	struct slab *new_slab = addr;
+	struct slab *new_slab = (struct slab *)addr;
 	void *base;
 	int idx;
 
 	new_slab->obj_num = compute_slab_obj_num(size, PAGE_SIZE);
 	new_slab->free_num = new_slab->obj_num;
-	new_slab->base = new_slab + sizeof(struct slab) + 
-		new_slab->obj_num * sizeof(int);
+	new_slab->base = addr + sizeof(struct slab) + 
+		(new_slab->obj_num * sizeof(int));
 
-	for (idx = 0; idx < new_slab->obj_num - 1; idx++) {
+	for (idx = 0; idx < new_slab->obj_num - 1; idx++)
 		slab_bufctl(new_slab)[idx] = idx + 1;
-	}
 	slab_bufctl(new_slab)[idx] = -1;
 
 	new_slab->free_idx = 0;
 	list_add_tail(&(new_slab->list), list_head);
 
+	if (!slab_cache_array[slab_idx].slab_page)
+		slab_cache_array[slab_idx].slab_page = addr;
 	slab_cache_array[slab_idx].free_num = 
 			slab_cache_array[slab_idx].slab_num * new_slab->free_num;
 }
@@ -171,14 +229,27 @@ void init_slab_cache(void)
 		init_slab(i, slab_size[i], &slab_cache_array[i].list);
 	}
 
-	__show_slab_list(&slab_cache_array[0].list);
+	//__show_slab_list(&slab_cache_array[0].list);
 	//show_slab_list();
 	void *addr;
-
 	addr = kmalloc(4);
 	printk("alloc addr at 0x%x\n", addr);
 	addr = kmalloc(4);
 	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(4);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	kfree(addr);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	addr = kmalloc(64);
+	printk("alloc addr at 0x%x\n", addr);
+	kfree(addr);
+	addr = kmalloc(64);
 	printk("alloc addr at 0x%x\n", addr);
 }

@@ -68,3 +68,4 @@ boot: a
 log: bochsout.txt
 
 keyboard_mapping: enabled=1, map=$BXSHARE/keymaps/x11-pc-us.map
+ata0-master: type=disk, path="hd.img", mode=flat, cylinders=203, heads=16, spt=63

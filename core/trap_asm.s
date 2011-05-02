@@ -5,7 +5,7 @@
 .global double_fault, invalid_TSS, segment_not_present
 .global device_not_available, page_fault, timer_interrupt
 .global stack_segment, general_protection, parallel_interrupt
-.global keyboard_interrupt, default_int
+.global keyboard_interrupt, hd_interrupt, default_int
 
 .macro SAVE_ALL
 	push %fs
@@ -225,6 +225,21 @@ keyboard_interrupt:
 	call do_keyboard
 	RESTORE_ALL
 	#iret
+
+.align 2
+hd_interrupt:
+	SAVE_ALL
+	movw $0x10, %ax
+	movw %ax, %ds
+	movw %ax, %es
+	movw %ax, %fs
+	movb $0x20, %al
+	outb %al, $0xa0
+	jmp 1f
+1:	jmp 1f
+1:	call do_hd
+	RESTORE_ALL
+	iret
 
 .align 2
 parallel_interrupt:

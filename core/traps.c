@@ -1,3 +1,10 @@
+/*
+ * traps.c
+ *
+ * (c) 2011	wzt http://www.cloud-sec.org
+ *
+ */
+
 #include <wos/gdt.h>
 #include <wos/asm.h>
 #include <wos/task.h>
@@ -19,7 +26,6 @@ extern void segment_not_present();
 extern void stack_segment();
 extern void general_protection();
 extern void device_not_available();
-extern void page_fault();
 extern void timer_interrupt();
 extern void parallel_interrupt();
 extern void keyboard_interrupt();

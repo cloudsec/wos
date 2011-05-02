@@ -106,13 +106,18 @@ void kernel_init(void)
 {
 	init_vga();
 	init_8259A();
+	init_hd();
 	init_trap();
 	init_mm();
 	init_keyboard(); 
 	init_schedule();
-	init_timer(100);
+	//init_timer(100);
 
 	sti();
+	//setup_dpt();
+	hd_test();
+	for (;;);
+/*
 	creat_kthread((unsigned int)&run_init_task3);
 
 	printk("Move to ring3.\n");
@@ -121,4 +126,5 @@ void kernel_init(void)
 	creat_task((unsigned int)&run_init_task1);
 	creat_task((unsigned int)&run_init_task2);
 	run_init_task();
+*/
 }

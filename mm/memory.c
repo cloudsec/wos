@@ -11,6 +11,8 @@
 #include <wos/mm.h>
 #include <wos/type.h>
 
+extern void page_fault();
+
 /* set kernel page dectory at 0x100000(1MB). */
 unsigned int pg_dir = 0x100000;
 

@@ -428,7 +428,7 @@ int sys_creat_task(unsigned int eip)
         }
         printk("pid: %d\n", pid);
 
-        tsk = (struct task_struct *)alloc_page(2);
+        tsk = (struct task_struct *)alloc_page(1);
         if (!tsk) {
                 printk("Alloc tsk page failed.\n");
                 return -1;
@@ -442,14 +442,15 @@ int sys_creat_task(unsigned int eip)
         tsk->tss.ss1 = 0;
         tsk->tss.esp2 = 0;
         tsk->tss.ss2 = 0;
-        tsk->tss.cr3 = pg_dir;
+        //tsk->tss.cr3 = pg_dir;
         tsk->tss.eip = eip;
         tsk->tss.eflags = 0x200;
         tsk->tss.eax = 0;
         tsk->tss.ebx = 0;
         tsk->tss.ecx = 0;
         tsk->tss.edx = 0;
-        tsk->tss.esp = (unsigned int)alloc_page(1) + PAGE_SIZE;
+        tsk->tss.esp = (unsigned int)alloc_page(0) + PAGE_SIZE;
+	printk("Alloc tsk ring3 stack at 0x%x\n", tsk->tss.esp - PAGE_SIZE);
         tsk->tss.ebp = 0;
         tsk->tss.esi = 0;
         tsk->tss.edi = 0;
@@ -474,6 +475,8 @@ int sys_creat_task(unsigned int eip)
 
         set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
+
+	setup_task_pages(tsk);
 
         list_add_tail(&(tsk->list), &task_list_head);
 

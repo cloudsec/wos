@@ -238,6 +238,7 @@ void init_slab_cache(void)
 
 	//__show_slab_list(&slab_cache_array[0].list);
 	//show_slab_list();
+/*
 	void *addr;
 	addr = kmalloc(4);
 	printk("alloc addr at 0x%x\n", addr);
@@ -259,4 +260,5 @@ void init_slab_cache(void)
 	kfree(addr);
 	addr = kmalloc(64);
 	printk("alloc addr at 0x%x\n", addr);
+*/
 }

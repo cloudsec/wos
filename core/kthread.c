@@ -1,3 +1,10 @@
+/*
+ * kthread.c - kernel thread support
+ *
+ * (c) 2011	wzt http://www.cloud-sec.org
+ *
+ */
+
 #include <wos/task.h>
 #include <wos/gdt.h>
 #include <wos/mm.h>

@@ -157,7 +157,6 @@ void init_trap(void)
 	set_trap_gate((unsigned int)invalid_op, 6);
 	set_trap_gate((unsigned int)device_not_available, 7);
 	set_trap_gate((unsigned int)coprocessor_segment_overrun, 9);
-	set_trap_gate((unsigned int)page_fault, 14);
 	set_trap_gate((unsigned int)reserved, 15);
 	set_trap_gate((unsigned int)irq13, 45);
 

@@ -8,15 +8,15 @@
 #define PAGE_NUM			DEFAULT_MEM_SIZE / PAGE_SIZE	
 #define PAGE_SHIFT			12
 
-#define KERNEL_MEM_SIZE			(2*1024*1024)			/* 1MB */
+#define KERNEL_MEM_SIZE			(2*1024*1024)			/* 2MB */
 #define KERNEL_MEM_MAP			KERNEL_MEM_SIZE >> PAGE_SHIFT
-#define KERNEL_PDE_NUM			16	
+#define KERNEL_PDE_NUM			16
 
 #define MEM_RESERVED			-1
 #define MEM_UNUSED			0
 #define MEM_USED			1
 
-#define PAGE_PRESENT                    1
+#define PAGE_PRESENT                    (1<<0)
 #define PAGE_WRITE                      (1<<1)
 #define PAGE_USER                       (1<<2)
 #define PAGE_KERNEL                     (0<<2)

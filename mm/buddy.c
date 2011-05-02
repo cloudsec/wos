@@ -28,12 +28,17 @@
  * +----+   +-----------+   +-----------+
  *
  *
+ * a*x + 2a*x + 4a*x + 8a*x = 512;
+ * (1 + 2 + 4 + 8)ax = 512;
+ * x = 512/(1 + 2 + 4 + 8)*a;
+ *
  */
 
 #include <wos/buddy.h>
 #include <wos/type.h>
 
 int buddy_size[BUDDY_CHUNK_NUM] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
+int buddy_chunk_num = 0;
 
 struct mm_buddy mm_buddy_array[BUDDY_CHUNK_NUM];
 
@@ -115,7 +120,7 @@ void *alloc_page(int order)
 
 	for (idx = order + 1; idx < BUDDY_CHUNK_NUM; idx++) {
 		if (mm_buddy_array[idx].free_num) {
-			printk("alloc page from order: %d\n", idx);
+			//printk("alloc page from order: %d\n", idx);
 			addr = __alloc_page(order, idx);
 			if (addr)
 				return addr;
@@ -171,12 +176,12 @@ void init_buddy_list(void)
 
 	base = mm_buddy_base;
 	for (i = 0; i < BUDDY_CHUNK_NUM; i++) {
-		mm_buddy_array[i].size = PAGE_SIZE * (1 << i) * BUDDY_SUB_CHUNK_NUM;
+		mm_buddy_array[i].size = PAGE_SIZE * (1 << i) * buddy_chunk_num;
 		mm_buddy_array[i].chunk_num = buddy_size[i];
 		mm_buddy_array[i].order = i;
-		mm_buddy_array[i].free_num = BUDDY_SUB_CHUNK_NUM;
-		mm_buddy_array[i].total_num = BUDDY_SUB_CHUNK_NUM;
-		for (j = 0; j < BUDDY_SUB_CHUNK_NUM; j++)
+		mm_buddy_array[i].free_num = buddy_chunk_num;
+		mm_buddy_array[i].total_num = buddy_chunk_num;
+		for (j = 0; j < buddy_chunk_num; j++)
 			mm_buddy_array[i].obj[j] = base + j * (PAGE_SIZE * (1 << i));
 		for (j = 0; j < MAX_BUDDY_CHUNK_NUM; j++)
 			mm_buddy_array[i].obj_map[j] = 0;
@@ -187,27 +192,28 @@ void init_buddy_list(void)
 int compute_buddy_num(void)
 {
 	int i;
-	int num = 0;
+	int num = 0, tmp;
 
 	for (i = 0; i < BUDDY_CHUNK_NUM; i++)
-		num += (1 << i) * BUDDY_SUB_CHUNK_NUM;
+		num += (1 << i);
+	printk("%d\t0x%x\t0x%x\n", num, BUDDY_SIZE, num * PAGE_SIZE);
 	
-	return num;
+	for (i = 0;; i++) {
+		if ((BUDDY_SIZE) <= (i * num * PAGE_SIZE))
+			return i;
+	}
+	
+	return -1;
 }
 
-int alloc_buddy_memory(void)
+int init_buddy_memory(void)
 {
-	int i, buddy_num;
-
-	buddy_num = compute_buddy_num();
-	printk("buddy page num: %d\ttotal page num: %d\n", buddy_num, PAGE_NUM);
-	if (buddy_num > PAGE_NUM) {
-		printk("buddy num: %d is bigger than %d\n", buddy_num, PAGE_NUM);
+	buddy_chunk_num = compute_buddy_num();
+	printk("buddy page num: 0x%x\ttotal page num: %d\n", buddy_chunk_num, PAGE_NUM);
+	if (buddy_chunk_num > PAGE_NUM) {
+		printk("buddy num: %d is bigger than %d\n", buddy_chunk_num, PAGE_NUM);
 		return -1;
 	}
-
-	for (i = KERNEL_MEM_MAP; i < KERNEL_MEM_MAP + buddy_num; i++)
-		mem_map[i] = MEM_USED;
 
 	mm_buddy_base = (void *)BUDDY_MEM_BASE;
 
@@ -216,15 +222,15 @@ int alloc_buddy_memory(void)
 
 int init_buddy(void)
 {
-	if (alloc_buddy_memory() == -1) {
+	if (init_buddy_memory() == -1) {
 		printk("Init buddy system failed.\n");
 		return -1;
 	}
 	printk("Alloc buddy memory at 0x%x\n", mm_buddy_base);
 
 	init_buddy_list();
-	//show_buddy_list();
-
+/*
+	show_buddy_list();
 	void *addr;
 	addr = alloc_page(0);
 	printk("allocte memory at 0x%x\n", addr);
@@ -235,4 +241,5 @@ int init_buddy(void)
 	addr = alloc_page(0);
 	printk("allocte memory at 0x%x\n", addr);
 	free_page(addr);	
+*/
 }

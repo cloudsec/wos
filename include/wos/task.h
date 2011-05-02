@@ -77,9 +77,24 @@ struct regs {
 #define TASK_RUNNING		1	
 
 #define DEFAULT_PRIORITY	200
-#define DEFAULT_COUNTER		1000
+#define DEFAULT_COUNTER		200
 
 #define MAX_PID			1024
+
+#define MOVE_TO_RING3()		asm("movl %%esp, %%eax\n\t"	\
+					"pushl $0x17\n\t"	\
+					"pushl %%eax\n\t"	\
+					"pushfl\n\t"		\
+					"pushl $0x0f\n\t"	\
+					"pushl $1f\n\t"		\
+					"iret\n\t"		\
+					"1:\n\t"		\
+					"movw $0x17, %%ax\n\t"	\
+					"movw %%ax, %%ds\n\t"	\
+					"movw %%ax, %%es\n\t"	\
+					"movw %%ax, %%fs\n\t"	\
+					"movw %%ax, %%gs\n"	\
+					::);
 
 struct list_head task_list_head;
 struct task_struct *current;

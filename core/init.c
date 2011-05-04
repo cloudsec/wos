@@ -109,6 +109,7 @@ void kernel_init(void)
 	init_hd();
 	init_trap();
 	init_mm();
+	init_fs();
 	init_keyboard(); 
 	init_schedule();
 	//init_timer(100);

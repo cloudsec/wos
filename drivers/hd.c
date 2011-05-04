@@ -1,6 +1,7 @@
 #include <wos/gdt.h>
 #include <wos/asm.h>
 #include <wos/hd.h>
+#include <wos/fs.h>
 
 extern void hd_interrupt(void);
 
@@ -84,7 +85,8 @@ void hd_test(void)
 	
 	hd_read(0, 1, sect);
 
-	printk("!0x%x, 0x%x\n", sect[0x1fe], sect[0x1ff]);
+	printk("block start: 0x%x, block num: 0x%x\n", 
+		sect[0x1be + 0x08], sect[0x1be + 0x0c]);
 }
 
 void setup_dpt(void)
@@ -94,7 +96,7 @@ void setup_dpt(void)
 	sect[0x1be] = 0x80;
 	sect[0x1be + 0x04] = 0x85;
 	*(unsigned long *)&sect[0x1be + 0x08] = 1;
-	*(unsigned long *)&sect[0x1be + 0x0c] = 85*1024*2;
+	*(unsigned long *)&sect[0x1be + 0x0c] = DEFAULT_HD_SIZE / BLOCK_SIZE;
 
 	sect[0x1fe] = 0x55;
 	sect[0x1ff] = 0xaa;

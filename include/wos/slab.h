@@ -10,6 +10,9 @@ struct slab_cache {
 	int slab_size;
 	int slab_num;
 	int free_num;
+	int align;
+	int color_num;
+	int color_next;
 	struct list_head list;
 };
 
@@ -20,5 +23,8 @@ struct slab {
 	void *base;
 	struct list_head list;
 };
+
+#define ALIGN(x, a)             (((x) + (a - 1)) & (~(a - 1)))
+#define DEFAULT_ALIGN		4
 
 #endif

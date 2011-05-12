@@ -14,6 +14,9 @@ static int slab_size[SLAB_SIZE_NUM] = {8, 16, 32, 64, 128, 256, 512, 1024, 2048,
 
 struct slab_cache slab_cache_array[SLAB_SIZE_NUM];
 
+void __init_slab(int slab_idx, void *addr, int size,
+                struct list_head *list_head);
+
 void __show_slab_list(struct list_head *list_head)
 {
 	struct slab *slab;
@@ -35,21 +38,25 @@ void show_slab_list(void)
 {
 	int idx;
 
-	for (idx = 0; idx < SLAB_SIZE_NUM; idx++) {
-		printk("slab size: %d\tslab num: %d\tfree num: %d\tslab_page: 0x%x\n",
+	//for (idx = 0; idx < SLAB_SIZE_NUM; idx++) {
+	for (idx = 0; idx < 1; idx++) {
+		printk("slab size: %d slab num: %d free num: %d color num: %d slab_page: 0x%x\n",
 			slab_cache_array[idx].slab_size, 
 			slab_cache_array[idx].slab_num,
 			slab_cache_array[idx].free_num,
+			slab_cache_array[idx].color_num,
 			slab_cache_array[idx].slab_page);
 		__show_slab_list(&slab_cache_array[idx].list);
 	}
 }
 
+/* bufctl just behind the slab struct. */
 unsigned int *slab_bufctl(struct slab *slab)
 {
 	return (unsigned int *)(slab + 1);
 }
 
+/* get an obj from a slab. */
 void *get_slab_obj(struct slab *slab, int idx)
 {
 	void *obj;
@@ -76,6 +83,25 @@ int check_slab_size(int size)
         return -1;
 }
 
+/* expand a new slab with PAGE_SIZE. */
+void *expand_slab(int idx)
+{
+	void *new_slab = NULL;
+
+	new_slab = alloc_page(0);
+	if (!new_slab) {
+		printk("alloc_page failed.\n");
+		return NULL;
+	}
+	
+	__init_slab(idx, new_slab, slab_cache_array[idx].slab_size,
+		&(slab_cache_array[idx].list));
+	
+	slab_cache_array[idx].slab_num++;
+
+	return new_slab;
+}
+
 void *kmalloc(int size)
 {
 	struct slab *s = NULL;
@@ -89,8 +115,13 @@ void *kmalloc(int size)
 	idx = check_slab_size(size);
 
 	if (!slab_cache_array[idx].free_num) {
-		printk("alloc slab obj in %d failed.\n", idx);
-		return NULL;
+		printk("expand slab obj in %d.\n", idx);
+		if (!(s = expand_slab(idx))) {
+			printk("expand slab failed.\n");
+			return NULL;
+		}
+		obj = get_slab_obj(s, idx);
+		return obj;
 	}
 
 	list_for_each(p, (&slab_cache_array[idx].list)) {
@@ -104,24 +135,40 @@ void *kmalloc(int size)
 	return NULL;
 }
 
+/* support for the kfree. */
 int addr_to_cache_idx(void *addr)
 {
 	unsigned int align_addr = (unsigned int)addr & 0xfffff000;
-	unsigned int base;
-	unsigned int idx;
+	int idx;
 
-	printk("align addr: 0x%x\n", align_addr);
-	base = (unsigned int)(slab_cache_array[0].slab_page);
-	printk("base addr: 0x%x\n", base);
+	for (idx = 0; idx < SLAB_SIZE_NUM; idx++) {
+		if ((unsigned int)slab_cache_array[idx].slab_page >= align_addr)
+			return idx;
+	}
 
-	base = align_addr - base;
-	printk("base addr: 0x%x\n", base);
-
-	idx = base / (SLAB_NUM * PAGE_SIZE);
-	printk("cache idx: %d\n", idx);
-
-	return idx;
+	return -1;
 }
+
+/*
+int addr_to_cache_idx(void *addr)
+{
+        unsigned int align_addr = (unsigned int)addr & 0xfffff000;
+        unsigned int base;
+        unsigned int idx;
+
+        printk("align addr: 0x%x\n", align_addr);
+        base = (unsigned int)(slab_cache_array[0].slab_page);
+        printk("base addr: 0x%x\n", base);
+
+        base = align_addr - base;
+        printk("base addr: 0x%x\n", base);
+
+        idx = base / (SLAB_NUM * PAGE_SIZE);
+        printk("cache idx: %d\n", idx);
+
+        return idx;
+}
+*/
 
 struct slab *search_slab(void *addr, struct list_head *list_head)
 {
@@ -178,6 +225,59 @@ int compute_slab_obj_num(int obj_size, int slab_size)
 	return (slab_size - sizeof(struct slab)) / (obj_size + sizeof(int));
 }
 
+/*
+ * compute slab color num for hardware cache.
+ */
+int compute_slab_color_num(int obj_size, int slab_size)
+{
+	return (slab_size - sizeof(struct slab)) % (obj_size + sizeof(int));
+}
+
+int get_slab_color(int slab_idx)
+{
+	if (slab_cache_array[slab_idx].color_next ==
+		slab_cache_array[slab_idx].color_num)
+		return 0;
+	else
+		return slab_cache_array[slab_idx].color_next++;
+}
+
+int set_slab_base_addr(void *addr, struct slab *new_slab)
+{
+	return ALIGN((unsigned int)(addr + sizeof(struct slab) +
+                (new_slab->obj_num * sizeof(int))), DEFAULT_ALIGN);
+}
+
+/* 
+ * support for CPU hardware cache.
+ */
+int fix_slab_base_addr(void *addr, int slab_idx)
+{
+	return (unsigned int)addr + slab_cache_array[slab_idx].color_next;
+}
+
+void set_slab_cache_array(int slab_idx, void *addr, int size, 
+		struct slab *new_slab)
+{
+	slab_cache_array[slab_idx].slab_page = addr;
+	slab_cache_array[slab_idx].free_num += new_slab->free_num;
+	slab_cache_array[slab_idx].color_num = 
+			compute_slab_color_num(size, PAGE_SIZE);
+	slab_cache_array[slab_idx].color_next = 0;
+}
+
+/* 
+ * all the slab managment builtin the front of the slab, next is bufctl
+ * array which is a sample link list of obj. the end of the slab maybe
+ * not used, it can be used for slab color for hardware cache.
+ *
+ * the slab struct like this:
+ *
+ * +-----------------------------------------------+
+ * | struct slab | bufctl | obj | obj | ...| color |
+ * +-----------------------------------------------+
+ * 
+ */
 void __init_slab(int slab_idx, void *addr, int size, 
 		struct list_head *list_head)
 {
@@ -187,8 +287,6 @@ void __init_slab(int slab_idx, void *addr, int size,
 
 	new_slab->obj_num = compute_slab_obj_num(size, PAGE_SIZE);
 	new_slab->free_num = new_slab->obj_num;
-	new_slab->base = addr + sizeof(struct slab) + 
-		(new_slab->obj_num * sizeof(int));
 
 	for (idx = 0; idx < new_slab->obj_num - 1; idx++)
 		slab_bufctl(new_slab)[idx] = idx + 1;
@@ -197,10 +295,10 @@ void __init_slab(int slab_idx, void *addr, int size,
 	new_slab->free_idx = 0;
 	list_add_tail(&(new_slab->list), list_head);
 
-	if (!slab_cache_array[slab_idx].slab_page)
-		slab_cache_array[slab_idx].slab_page = addr;
-	slab_cache_array[slab_idx].free_num = 
-			slab_cache_array[slab_idx].slab_num * new_slab->free_num;
+	set_slab_cache_array(slab_idx, addr, size, new_slab);
+
+	new_slab->base = set_slab_base_addr(addr, new_slab);	
+	new_slab->base = fix_slab_base_addr(new_slab->base, slab_idx);	
 }
 
 int init_slab(int idx, int size, struct list_head *list_head)
@@ -232,33 +330,21 @@ void init_slab_cache(void)
 	for (i = 0; i < SLAB_SIZE_NUM; i++) {
 		slab_cache_array[i].slab_size = slab_size[i];
 		slab_cache_array[i].slab_num = SLAB_NUM;
+		slab_cache_array[i].free_num = 0;
 		INIT_LIST_HEAD(&slab_cache_array[i].list);
 		init_slab(i, slab_size[i], &slab_cache_array[i].list);
 	}
 
-	//__show_slab_list(&slab_cache_array[0].list);
-	//show_slab_list();
-/*
+	//__show_slab_list(&slab_cache_array[4].list);
+	show_slab_list();
+
 	void *addr;
-	addr = kmalloc(4);
-	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(4);
-	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
+	for (i = 0; i < 35; i++) {
+		addr = kmalloc(128);
+		printk("alloc addr at 0x%x\n", addr);
+	}
 	kfree(addr);
-	addr = kmalloc(64);
+
+	addr = kmalloc(128);
 	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
-	kfree(addr);
-	addr = kmalloc(64);
-	printk("alloc addr at 0x%x\n", addr);
-*/
 }

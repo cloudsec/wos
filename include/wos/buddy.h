@@ -29,6 +29,8 @@ struct mm_buddy_chunk {
 #define BUDDY_SIZE                      (DEFAULT_MEM_SIZE - KERNEL_MEM_SIZE)
 #define BUDDY_MEM_BASE                  KERNEL_MEM_SIZE
 
+#define PAGE_ORDER_ZERO			0
+
 void *alloc_page(int order);
 void free_page(void *addr);
 

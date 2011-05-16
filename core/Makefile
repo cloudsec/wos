@@ -11,6 +11,7 @@ all:
 	$(CC) $(CFLAGS) -c sys.c
 	$(CC) $(CFLAGS) -c timer.c
 	$(CC) $(CFLAGS) -c traps.c
+	$(CC) $(CFLAGS) -c panic.c
 	$(AS) -o system_call.o system_call.s
 	$(AS) -o trap_asm.o trap_asm.s
 

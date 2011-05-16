@@ -53,23 +53,6 @@ void setup_idt(void)
 		set_intr_gate((unsigned int)default_int, i);
 }
 
-void panic(char *msg, unsigned int esp)
-{
-	struct regs *reg = (struct regs *)esp;
-
-	printk("Interrupt [%s] Error:\n===============================\n", msg);
-	printk("Error code: 0x%x\n", reg->error_code);
-	printk("EIP: 0x%x, EFLAGS: 0x%x\n", reg->orig_eip, reg->eflags);
-	printk("General Registers:\n==================================\n");
-	printk("eax: 0x%x, ebx: 0x%x, ecx: 0x%x, edx: 0x%x\n",
-		reg->eax, reg->ebx, reg->ecx, reg->edx);
-	printk("Segment Registers:\n===================================\n");
-	printk("cs: 0x%x ds: 0x%x es: 0x%x fs: 0x%x\n", reg->orig_cs, reg->ds, 
-		reg->es, reg->fs);
-
-	halt();
-}
-
 void do_divide_error(unsigned int esp)
 {
 	panic("divide", esp);

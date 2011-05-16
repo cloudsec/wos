@@ -109,14 +109,14 @@ void kernel_init(void)
 	init_hd();
 	init_trap();
 	init_mm();
-	init_fs();
+	//init_fs();
 	init_keyboard(); 
 	init_schedule();
 	//init_timer(100);
 
 	sti();
 	//setup_dpt();
-	hd_test();
+	//hd_test();
 	for (;;);
 /*
 	creat_kthread((unsigned int)&run_init_task3);

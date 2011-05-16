@@ -132,5 +132,9 @@ void init_mm(void)
                 mem_map[i] = MEM_UNUSED;
 
 	init_buddy();
-	init_slab_cache();
+	init_general_slab_cache();
+	init_kmem_cache();
+	printk("init ok.\n");
+
+	mm_test();
 }

@@ -9,6 +9,7 @@ all:
 	$(CC) $(CFLAGS) -c gdt.c
 	$(CC) $(CFLAGS) -c sched.c
 	$(CC) $(CFLAGS) -c sys.c
+	$(CC) $(CFLAGS) -c spinlock.c
 	$(CC) $(CFLAGS) -c timer.c
 	$(CC) $(CFLAGS) -c traps.c
 	$(CC) $(CFLAGS) -c panic.c

@@ -27,6 +27,10 @@
  * - hardware cache support.
  * - slab expand support.
  * - genernal slab and slab cache support.
+ *
+ * todo:
+ *
+ * - smp cpu support.
  * - slab obj cache support.
  * 
  */
@@ -108,7 +112,7 @@ void set_slab_obj_cache(struct slab *slab, struct slab_cache *slab_cache)
 	slab_cache->obj_cache.curr_obj = 0;
 	slab_cache->obj_cache.limit += slab->obj_num;
 
-	for (idx = 0; idx < slab->obj_num; idx++)
+	for (idx = 0; idx < slab->obj_num - 1; idx++)
 		slab_cache->obj_cache.entry[idx] = 
 			get_slab_obj(slab, slab_cache);
 }
@@ -362,7 +366,7 @@ void init_general_slab_cache(void)
         	slab_cache_array[i].color_num = 
 			compute_slab_color_num(slab_size[i], PAGE_SIZE);
         	slab_cache_array[i].color_next = 0;
-		//slab_cache_array[i].obj_cache.limit = 0;
+		slab_cache_array[i].obj_cache.limit = 0;
 		INIT_LIST_HEAD(&slab_cache_array[i].list);
 		init_slab(&slab_cache_array[i], slab_size[i]);
 	}
@@ -414,7 +418,7 @@ struct slab_cache *creat_kmem_cache(char *name, int size)
 	cachep->free_num = 0;
 	cachep->ctor = NULL;
 	cachep->dtor = NULL;
-	//cachep->obj_cache.limit = 0;
+	cachep->obj_cache.limit = 0;
 
 	strcpy(cachep->name, name);
 

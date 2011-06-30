@@ -6,7 +6,7 @@ CFLAGS	=-pedantic -nostdlib -nostdinc -I include -fomit-frame-pointer -fno-stack
 KERNEL_OBJS = boot/load.o core/init.o core/gdt.o core/trap_asm.o core/traps.o core/timer.o \
 	core/sched.o core/fork.o core/kthread.o core/system_call.o core/sys.o core/panic.o \
 	mm/memory.o mm/slab.o mm/buddy.o mm/page_fault.o fs/fs.o \
-	drivers/keyboard.o drivers/hd.o lib/printk.o drivers/vga.o lib/string.o
+	drivers/keyboard.o drivers/hd.o lib/printk.o drivers/vga.o core/spinlock.o lib/string.o
 
 all: boot core mm lib kernel image
 boot:

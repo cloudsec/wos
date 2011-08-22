@@ -42,13 +42,13 @@ void run_init_task(void)
 /*
  * task1 & task2 are started by user mode process with system call support.
  */
-void run_init_task1(void)
+void run_task1(void)
 {
 	for (;;)
 		write("B");
 }
 
-void run_init_task2(void)
+void run_task2(void)
 {
 	for (;;)
 		write("C");
@@ -57,7 +57,7 @@ void run_init_task2(void)
 /*
  * task3 is started by kernel process, it can directly invoke printk.
  */
-void run_init_task3(void)
+void run_task3(void)
 {
 	for (;;)
 		printk("D");
@@ -79,16 +79,19 @@ void kernel_init(void)
 	//setup_dpt();
 	//hd_test();
 
-	/* create a kernel thread. */
-	creat_kthread((unsigned int)&run_init_task3);
+	creat_kthread((unsigned int)&run_task3);
 	printk("Move to ring3.\n");
 
 	timer_test();
-	MOVE_TO_RING3()
-	for(;;);
-	//run_init_task();
 
-	/* create a ring3 task. */
-	creat_task((unsigned int)&run_init_task1);
-	creat_task((unsigned int)&run_init_task2);
+	/* start move to ring3 mode. */
+	MOVE_TO_RING3()
+	
+	creat_task((unsigned int)&run_task1);
+
+	/* the below code is our init task. */
+	for (;;) {
+		write("in idle task.\n");
+		pause();
+	}
 }

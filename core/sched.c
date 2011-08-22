@@ -9,7 +9,7 @@
 
 extern void timer_interrupt();
 extern void system_call();
-extern void run_init_task1(void);
+extern void run_task1(void);
 extern unsigned int pg_dir;
 extern struct gdt_desc new_gdt[8192];
 
@@ -44,7 +44,7 @@ void schedule(void)
 {
         struct task_struct *tsk = NULL, *next = NULL;
         struct list_head *p = NULL;
-	int counter = 0;
+	int counter = -1;
 
 	for (;;) {
         	list_for_each(p, (&task_list_head)) {
@@ -57,6 +57,11 @@ void schedule(void)
 				}
 			}
 		}
+		if (counter == -1) {
+			next = &init_task;
+			break;
+		}
+
 		if (counter > 0)
 			break;
 
@@ -75,6 +80,8 @@ void schedule(void)
 	/* schedule can never get here. */
 }
 
+/* init_task aren't add into the task list, it will not join in the process schedule,
+   it runs run only at the time there is no process choosed by scheduler(). */
 void setup_init_task(void)
 {
 	init_task.tss.prev_task_link = 0;
@@ -118,9 +125,8 @@ void setup_init_task(void)
         set_gdt_desc(init_task.ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(init_task.ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
 
+	/* the init task's state is not impornt, we nerver use it. */
 	init_task.state = TASK_RUNABLE;
-        /* move init_task to the task list. */
-        list_add_tail(&(init_task.list), &task_list_head);
 }
 
 void setup_init_task1(void)
@@ -133,7 +139,7 @@ void setup_init_task1(void)
         init_task1.tss.esp2 = 0;
         init_task1.tss.ss2 = 0;
         init_task1.tss.cr3 = pg_dir;
-        init_task1.tss.eip = run_init_task1;
+        init_task1.tss.eip = run_task1;
         init_task1.tss.eflags = 0x200;
         init_task1.tss.eax = 0;
         init_task1.tss.ebx = 0;

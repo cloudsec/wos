@@ -72,7 +72,7 @@ void do_timer(unsigned int esp)
 
 	timer_tick++;
 
-	if (--current->counter > 0)
+	if (current && --current->counter > 0)
 		return ;
 /*
 	if (!(reg->orig_cs & 0x3)) {

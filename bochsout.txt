@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xb1f9e008. after alignment, vector=0xb1f9f000
+00000000000i[MEM0 ] allocated memory at 0xb1ef2008. after alignment, vector=0xb1ef3000
 00000000000i[MEM0 ] 64.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=64
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Mon May  2 17:32:49 2011 (time0=1304328769)
+00000000000i[CMOS ] Setting initial clock to: Fri Aug 19 15:35:35 2011 (time0=1313739335)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'wos.img' ro=0, h=2,t=80,spt=18
@@ -104,62 +104,4 @@
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[XGUI ] [x] Mouse off
 00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
-00000003305i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00000318057i[KBD  ] reset-disable command received
-00000444815i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00000444886i[VGA  ] VBE known Display Interface b0c0
-00000444918i[VGA  ] VBE known Display Interface b0c5
-00000447843i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
-00000600000i[XGUI ] charmap update. Font Height is 16
-00000760532i[BIOS ] Starting rombios32
-00000761029i[BIOS ] Shutdown flag 0
-00000761710i[BIOS ] ram_size=0x04000000
-00000762188i[BIOS ] ram_end=64MB
-00000802748i[BIOS ] Found 1 cpu(s)
-00000821735i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00000834412i[BIOS ] bios_table_cur_addr: 0x000fb928
-00000846880i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00004727140i[BIOS ] IDE time out
-00016897677i[BIOS ] Booting from 0000:7c00
-00017000000i[XGUI ] charmap update. Font Height is 16
-00019407170i[FDD  ] partial read() on floppy image returns 64/512
-00019453382i[FDD  ] read() on floppy image returns 0
-00019499594i[FDD  ] read() on floppy image returns 0
-00019545806i[FDD  ] read() on floppy image returns 0
-00019591999i[FDD  ] read() on floppy image returns 0
-00019638211i[FDD  ] read() on floppy image returns 0
-00019684423i[FDD  ] read() on floppy image returns 0
-00019730635i[FDD  ] read() on floppy image returns 0
-00019776847i[FDD  ] read() on floppy image returns 0
-00019823040i[FDD  ] read() on floppy image returns 0
-00019869252i[FDD  ] read() on floppy image returns 0
-00019915464i[FDD  ] read() on floppy image returns 0
-00019961676i[FDD  ] read() on floppy image returns 0
-00020007869i[FDD  ] read() on floppy image returns 0
-00020054081i[FDD  ] read() on floppy image returns 0
-00020100293i[FDD  ] read() on floppy image returns 0
-00020146505i[FDD  ] read() on floppy image returns 0
-00020192717i[FDD  ] read() on floppy image returns 0
-00020238910i[FDD  ] read() on floppy image returns 0
-00044163870i[     ] Ctrl-C detected in signal handler.
-00044163871i[     ] dbg: Quit
-00044163871i[CPU0 ] CPU is in protected mode (active)
-00044163871i[CPU0 ] CS.d_b = 32 bit
-00044163871i[CPU0 ] SS.d_b = 32 bit
-00044163871i[CPU0 ] | EAX=00000720  EBX=00009000  ECX=00000026  EDX=00000009
-00044163871i[CPU0 ] | ESP=0000663c  EBP=00000000  ESI=00000694  EDI=000005f4
-00044163871i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00044163871i[CPU0 ] | SEG selector     base    limit G D
-00044163871i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00044163871i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00044163871i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00044163871i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00044163871i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00044163871i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00044163871i[CPU0 ] |  GS:0018( 0003| 0|  0) 000b8000 0fffffff 1 1
-00044163871i[CPU0 ] | EIP=00004cc8 (00004cc8)
-00044163871i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
-00044163871i[CPU0 ] | CR3=0x00100000 CR4=0x00000000
-00044163871i[CMOS ] Last time is 1304328780 (Mon May  2 17:33:00 2011)
-00044163871i[XGUI ] Exit
-00044163871i[CTRL ] quit_sim called with exit code 0
+00000000000i[     ] Ctrl-C detected in signal handler.

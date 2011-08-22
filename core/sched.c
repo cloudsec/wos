@@ -5,6 +5,7 @@
 #include <wos/mm.h>
 #include <wos/unistd.h>
 #include <wos/type.h>
+#include <wos/debug.h>
 
 extern void timer_interrupt();
 extern void system_call();
@@ -59,7 +60,7 @@ void schedule(void)
 		if (counter > 0)
 			break;
 
-		//printk("all task counter is zero.\n");
+		DbgPrint("all task counter is zero.\n");
 		list_for_each(p, (&task_list_head)) {
 			tsk = list_entry(p, struct task_struct, list);
 			if (tsk) {
@@ -69,7 +70,7 @@ void schedule(void)
 		counter = 0;
 	}
 	
-	printk("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
+	DbgPrint("Choose pid: %d\ttss: 0x%x\n", next->pid, next->tss_sel);
 	switch_task(next)
 	/* schedule can never get here. */
 }

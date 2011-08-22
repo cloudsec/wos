@@ -10,6 +10,7 @@
 #include <wos/task.h>
 #include <wos/mm.h>
 #include <wos/type.h>
+#include <wos/debug.h>
 
 extern void page_fault();
 
@@ -27,11 +28,11 @@ void setup_kernel_pte(void)
 	for (i = 0; i < KERNEL_PDE_NUM; i++) {
 		*(kernel_pde + i) = pte_addr | PAGE_USER_MODE;
 		kernel_pte = (unsigned int*)pte_addr;
-		printk("0x%x, 0x%x\n", *(kernel_pde + i), kernel_pte);
+		DbgPrint("0x%x, 0x%x\n", *(kernel_pde + i), kernel_pte);
 		for (j = 0; j < 1024; j++) {
 			*(kernel_pte + j) = py_addr | PAGE_USER_MODE;
 			py_addr += PAGE_SIZE;
-			//printk("0x%x, 0x%x\n", *(kernel_pte + j), kernel_pte + j);
+			//DbgPrint("0x%x, 0x%x\n", *(kernel_pte + j), kernel_pte + j);
 		}
 		pte_addr += PAGE_SIZE;
 	}
@@ -50,10 +51,10 @@ int setup_kernel_pte1(void)
 
         kernel_pde = (unsigned int *)alloc_page(0);
         if (!kernel_pde) {
-                printk("Alloc page failed.\n");
+                DbgPrint("Alloc page failed.\n");
                 return -1;
         }
-        printk("Alloc task cr3 page table addr at: 0x%x\n", kernel_pde);
+        DbgPrint("Alloc task cr3 page table addr at: 0x%x\n", kernel_pde);
 
 	//kernel_pde = (unsigned int *)0x100000;
 	//kernel_pte = (unsigned int *)0x101000;
@@ -62,15 +63,14 @@ int setup_kernel_pte1(void)
         for (i = 0; i < KERNEL_PDE_NUM; i++) {
                 kernel_pte = (unsigned int *)alloc_page(0);
                 if (!kernel_pte) {
-                        printk("Alloc pte failed.\n");
+                        DbgPrint("Alloc pte failed.\n");
                         return -1;
                 }
 
                 *(kernel_pde + i) = (unsigned int)kernel_pte | PAGE_USER_MODE;
-                printk("Alloc pte %d at 0x%x\t0x%x\n", i, *(kernel_pde + i), kernel_pte);
+                DbgPrint("Alloc pte %d at 0x%x\t0x%x\n", i, *(kernel_pde + i), kernel_pte);
                 for (j = 0; j < 1024; j++) {
                         *(kernel_pte + j) = py_addr | PAGE_USER_MODE;
-                        //printk("0x%x\n", *(tsk_pte + i));
                         py_addr += PAGE_SIZE;
                 }
 		//kernel_pte += 1024;
@@ -90,29 +90,29 @@ int setup_task_pages(struct task_struct *tsk)
 
 	tsk_pde = (unsigned int *)alloc_page(0);
 	if (!tsk_pde) {
-		printk("Alloc page failed.\n");
+		DbgPrint("Alloc page failed.\n");
 		return -1;
 	}
-	printk("Alloc task cr3 page table addr at: 0x%x\n", tsk_pde);
+	DbgPrint("Alloc task cr3 page table addr at: 0x%x\n", tsk_pde);
 
 	/* user task mmap to all the 64MB memory. */
 	for (i = 0; i < 16; i++) {
 		tsk_pte = (unsigned int *)alloc_page(0);
 		if (!tsk_pte) {
-			printk("Alloc pte failed.\n");
+			DbgPrint("Alloc pte failed.\n");
 			return -1;
 		}
 		*(tsk_pde + i) = (unsigned int)tsk_pte | PAGE_USER_MODE;
-		printk("Alloc pte %d at 0x%x\t0x%x\n", i, tsk_pte, *(tsk_pde + i));
+		DbgPrint("Alloc pte %d at 0x%x\t0x%x\n", i, tsk_pte, *(tsk_pde + i));
 		for (j = 0; j < 1024; j++) {
 			*(tsk_pte + j) = py_addr | PAGE_USER_MODE;
-			//printk("0x%x\n", *(tsk_pte + i));
+			//DbgPrint("0x%x\n", *(tsk_pte + i));
 			py_addr += PAGE_SIZE;
 		}
 	}	
 	
 	tsk->tss.cr3 = (unsigned int)tsk_pde;
-	printk("task cr3 addr: 0x%x\n", tsk->tss.cr3);
+	DbgPrint("task cr3 addr: 0x%x\n", tsk->tss.cr3);
 	return 0;
 }
 
@@ -134,7 +134,7 @@ void init_mm(void)
 	init_buddy();
 	init_general_slab_cache();
 	init_kmem_cache();
-	printk("init ok.\n");
+	//DbgPrint("init ok.\n");
 
-	mm_test();
+	//mm_test();
 }

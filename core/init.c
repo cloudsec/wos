@@ -39,93 +39,54 @@ void run_init_task(void)
         }
 }
 
+/*
+ * task1 & task2 are started by user mode process with system call support.
+ */
 void run_init_task1(void)
 {
-        char c = 'B';
-        int x = 0;
-
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-		x = 4;
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x07, %%ah\n\t"
-                        "movb %0, %%al\n\t" "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
+	for (;;)
+		write("B");
 }
 
 void run_init_task2(void)
 {
-        char c = 'C';
-        int x = 0;
-
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                x = 6;
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x07, %%ah\n\t"
-                        "movb %0, %%al\n\t" "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
+	for (;;)
+		write("C");
 }
 
+/*
+ * task3 is started by kernel process, it can directly invoke printk.
+ */
 void run_init_task3(void)
 {
-        char c = 'D';
-        int x = 0;
-
-        for (x = 0; ; x += 2) {
-                if (x == 3840) {
-                        x = 0;
-                        continue;
-                }
-
-                x = 8;
-                asm("movw $0x18, %%ax\n\t"
-                        "movw %%ax, %%gs\n\t"
-                        "movb $0x07, %%ah\n\t"
-                        "movb %0, %%al\n\t" "movl %1, %%edi\n\t"
-                        "movw %%ax, %%gs:(%%edi)\n\t"
-                        ::"m"(c),"m"(x));
-        }
+	for (;;)
+		printk("D");
 }
 
 void kernel_init(void)
 {
 	init_vga();
 	init_8259A();
-	init_hd();
+	//init_hd();
 	init_trap();
 	init_mm();
 	//init_fs();
 	init_keyboard(); 
 	init_schedule();
-	//init_timer(100);
+	init_timer(100);
 
 	sti();
 	//setup_dpt();
 	//hd_test();
-	for (;;);
-/*
+
+	/* create a kernel thread. */
 	creat_kthread((unsigned int)&run_init_task3);
-
 	printk("Move to ring3.\n");
-	MOVE_TO_RING3()
 
+	MOVE_TO_RING3()
+	//run_init_task();
+
+	/* create a ring3 task. */
 	creat_task((unsigned int)&run_init_task1);
 	creat_task((unsigned int)&run_init_task2);
-	run_init_task();
-*/
 }

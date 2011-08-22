@@ -1,6 +1,7 @@
 #include <wos/gdt.h>
 #include <wos/asm.h>
 #include <wos/task.h>
+#include <wos/debug.h>
 
 extern void io_delay(void);
 
@@ -20,7 +21,7 @@ void do_timer(unsigned int esp)
 	}
 */
 
-	//printk("pid: %d counter is 0.\n", current->pid);
+	DbgPrint("pid: %d counter is 0.\n", current->pid);
 	schedule();
 }
 

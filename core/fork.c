@@ -11,6 +11,7 @@
 #include <wos/list.h>
 #include <wos/task.h>
 #include <wos/mm.h>
+#include <wos/debug.h>
 
 extern struct task_struct init_task;
 extern struct list_head task_list_head;
@@ -46,21 +47,21 @@ int do_fork(unsigned int esp)
 	struct task_struct *tsk;
 	int pid;
 
-	printk("cs: 0x%x, eip: 0x%x, ds: 0x%x\n", reg->orig_cs, reg->orig_eip, reg->ds);
+	DbgPrint("cs: 0x%x, eip: 0x%x, ds: 0x%x\n", reg->orig_cs, reg->orig_eip, reg->ds);
 
 	pid = get_pid();
 	if (pid == -1) {
-		printk("Get pid failed.\n");
+		DbgPrint("Get pid failed.\n");
 		return -1;
 	}
-	printk("pid: %d\n", pid);
+	DbgPrint("pid: %d\n", pid);
 
 	tsk = (struct task_struct *)alloc_page(2);
 	if (!tsk) {
-		printk("Alloc tsk page failed.\n");
+		DbgPrint("Alloc tsk page failed.\n");
 		return -1;
 	}
-	printk("Alloc tsk page at: 0x%x\n", tsk);
+	DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
 	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE * 2;
 	tsk->tss.ss0 = KERNEL_DATA_SEL;
@@ -92,10 +93,10 @@ int do_fork(unsigned int esp)
 	tsk->tss.ss = reg->ss;
         tsk->tss.io_map = 0x80000000;
 
-	printk("cs: 0x%x, ss: 0x%x\n", tsk->tss.cs, tsk->tss.ss);
-	printk("eax: 0x%x, ebx: 0x%x\n", tsk->tss.eax, tsk->tss.ebx);
-	printk("ldt_sel: 0x%x, cr3: 0x%x\n", tsk->tss.ldt_sel, tsk->tss.cr3);
-	printk("esp0: 0x%x, esp: 0x%x\n", tsk->tss.esp0, tsk->tss.esp);
+	DbgPrint("cs: 0x%x, ss: 0x%x\n", tsk->tss.cs, tsk->tss.ss);
+	DbgPrint("eax: 0x%x, ebx: 0x%x\n", tsk->tss.eax, tsk->tss.ebx);
+	DbgPrint("ldt_sel: 0x%x, cr3: 0x%x\n", tsk->tss.ldt_sel, tsk->tss.cr3);
+	DbgPrint("esp0: 0x%x, esp: 0x%x\n", tsk->tss.esp0, tsk->tss.esp);
 
 	tsk->tss_sel = TSS_SEL(pid);
 	tsk->ldt_sel = LDT_SEL(pid);
@@ -126,17 +127,17 @@ int task_clone(unsigned int eip)
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(1);
         if (!tsk) {
-                printk("Alloc tsk page failed.\n");
+                DbgPrint("Alloc tsk page failed.\n");
                 return -1;
         }
-        printk("Alloc tsk page at: 0x%x\n", tsk);
+        DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
 	memcpy(tsk, &init_task, sizeof(struct task_struct));
 
@@ -177,10 +178,10 @@ int task_clone1(struct task_struct *tsk, unsigned int eip,
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = stack0; 
@@ -232,17 +233,17 @@ int task_clone2(unsigned int eip, unsigned int stack0, unsigned int stack3)
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(1);
         if (!tsk) {
-                printk("Alloc tsk page failed.\n");
+                DbgPrint("Alloc tsk page failed.\n");
                 return -1;
         }
-        printk("Alloc tsk page at: 0x%x\n", tsk);
+        DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 	
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = stack0; 
@@ -294,17 +295,17 @@ int task_clone3(unsigned int eip)
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(2);
         if (!tsk) {
-                printk("Alloc tsk page failed.\n");
+                DbgPrint("Alloc tsk page failed.\n");
                 return -1;
         }
-        printk("Alloc tsk page at: 0x%x\n", tsk);
+        DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = tsk + PAGE_SIZE * 2;
@@ -357,17 +358,17 @@ int do_fork(unsigned int esp)
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(2);
         if (!tsk) {
-                printk("Alloc tsk page failed.\n");
+                DbgPrint("Alloc tsk page failed.\n");
                 return -1;
         }
-        printk("Alloc tsk page at: 0x%x\n", tsk);
+        DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = tsk + PAGE_SIZE * 2;
@@ -377,7 +378,7 @@ int do_fork(unsigned int esp)
         tsk->tss.esp2 = 0;
         tsk->tss.ss2 = 0;
         tsk->tss.cr3 = pg_dir;
-        //tsk->tss.eip = reg->orig_eip;
+        tsk->tss.eip = reg->orig_eip;
         //tsk->tss.eip = run_init_task1;
         tsk->tss.eflags = 0x200;
         tsk->tss.eax = 0;
@@ -423,17 +424,17 @@ int sys_creat_task(unsigned int eip)
 
         pid = get_pid();
         if (pid == -1) {
-                printk("Get pid failed.\n");
+                DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        printk("pid: %d\n", pid);
+        DbgPrint("pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(1);
         if (!tsk) {
-                printk("Alloc tsk page failed.\n");
+                DbgPrint("Alloc tsk page failed.\n");
                 return -1;
         }
-        printk("Alloc tsk page at: 0x%x\n", tsk);
+        DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = tsk + PAGE_SIZE * 2;
@@ -450,7 +451,7 @@ int sys_creat_task(unsigned int eip)
         tsk->tss.ecx = 0;
         tsk->tss.edx = 0;
         tsk->tss.esp = (unsigned int)alloc_page(0) + PAGE_SIZE;
-	printk("Alloc tsk ring3 stack at 0x%x\n", tsk->tss.esp - PAGE_SIZE);
+	DbgPrint("Alloc tsk ring3 stack at 0x%x\n", tsk->tss.esp - PAGE_SIZE);
         tsk->tss.ebp = 0;
         tsk->tss.esi = 0;
         tsk->tss.edi = 0;

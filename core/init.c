@@ -83,7 +83,9 @@ void kernel_init(void)
 	creat_kthread((unsigned int)&run_init_task3);
 	printk("Move to ring3.\n");
 
+	timer_test();
 	MOVE_TO_RING3()
+	for(;;);
 	//run_init_task();
 
 	/* create a ring3 task. */

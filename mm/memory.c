@@ -93,7 +93,7 @@ int setup_task_pages(struct task_struct *tsk)
 		DbgPrint("Alloc page failed.\n");
 		return -1;
 	}
-	DbgPrint("Alloc task cr3 page table addr at: 0x%x\n", tsk_pde);
+	printk("Alloc task cr3 page table addr at: 0x%x\n", tsk_pde);
 
 	/* user task mmap to all the 64MB memory. */
 	for (i = 0; i < 16; i++) {
@@ -106,13 +106,13 @@ int setup_task_pages(struct task_struct *tsk)
 		DbgPrint("Alloc pte %d at 0x%x\t0x%x\n", i, tsk_pte, *(tsk_pde + i));
 		for (j = 0; j < 1024; j++) {
 			*(tsk_pte + j) = py_addr | PAGE_USER_MODE;
-			//DbgPrint("0x%x\n", *(tsk_pte + i));
+			DbgPrint("0x%x\n", *(tsk_pte + i));
 			py_addr += PAGE_SIZE;
 		}
 	}	
 	
 	tsk->tss.cr3 = (unsigned int)tsk_pde;
-	DbgPrint("task cr3 addr: 0x%x\n", tsk->tss.cr3);
+	printk("task cr3 addr: 0x%x\n", tsk->tss.cr3);
 	return 0;
 }
 

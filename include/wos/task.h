@@ -77,7 +77,6 @@ struct regs {
 #define TASK_RUNNING		1	
 
 #define DEFAULT_PRIORITY	200
-//#define DEFAULT_COUNTER		200
 #define DEFAULT_COUNTER		15
 
 #define MAX_PID			1024

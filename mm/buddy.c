@@ -36,6 +36,7 @@
 
 #include <wos/buddy.h>
 #include <wos/type.h>
+#include <wos/debug.h>
 
 int buddy_size[BUDDY_CHUNK_NUM] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024};
 int buddy_chunk_num = 0;
@@ -196,7 +197,7 @@ int compute_buddy_num(void)
 
 	for (i = 0; i < BUDDY_CHUNK_NUM; i++)
 		num += (1 << i);
-	printk("%d\t0x%x\t0x%x\n", num, BUDDY_SIZE, num * PAGE_SIZE);
+	DbgPrint("%d\t0x%x\t0x%x\n", num, BUDDY_SIZE, num * PAGE_SIZE);
 	
 	for (i = 0;; i++) {
 		if ((BUDDY_SIZE) <= (i * num * PAGE_SIZE))
@@ -209,7 +210,7 @@ int compute_buddy_num(void)
 int init_buddy_memory(void)
 {
 	buddy_chunk_num = compute_buddy_num();
-	printk("buddy page num: 0x%x\ttotal page num: %d\n", buddy_chunk_num, PAGE_NUM);
+	//printk("buddy page num: 0x%x\ttotal page num: %d\n", buddy_chunk_num, PAGE_NUM);
 	if (buddy_chunk_num > PAGE_NUM) {
 		printk("buddy num: %d is bigger than %d\n", buddy_chunk_num, PAGE_NUM);
 		return -1;
@@ -226,7 +227,7 @@ int init_buddy(void)
 		printk("Init buddy system failed.\n");
 		return -1;
 	}
-	printk("Alloc buddy memory at 0x%x\n", mm_buddy_base);
+	printk("Init buddy memory at 0x%x.\n", mm_buddy_base);
 
 	init_buddy_list();
 /*

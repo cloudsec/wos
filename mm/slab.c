@@ -356,7 +356,6 @@ void init_general_slab_cache(void)
 {
 	int i;
 
-	printk("Init genernal slab cache.\n");
 	for (i = 0; i < SLAB_SIZE_NUM; i++) {
 		slab_cache_array[i].slab_size = slab_size[i];
 		slab_cache_array[i].slab_num = SLAB_NUM;
@@ -370,6 +369,7 @@ void init_general_slab_cache(void)
 		INIT_LIST_HEAD(&slab_cache_array[i].list);
 		init_slab(&slab_cache_array[i], slab_size[i]);
 	}
+	printk("Init genernal slab cache ok.\n");
 }
 
 void *kmem_cache_alloc(struct slab_cache *slab_cache)
@@ -490,8 +490,6 @@ void print_kmem_cache_list(void)
 
 void init_kmem_cache(void)
 {
-	printk("init kmem cache.\n");
-
 	INIT_LIST_HEAD(&kmem_list_head);
 
 	kmem_cache_st.slab_size = SLAB_CACHE_SIZE;
@@ -506,6 +504,8 @@ void init_kmem_cache(void)
 	INIT_LIST_HEAD(&(kmem_cache_st.list));
 	init_slab(&kmem_cache_st, SLAB_CACHE_SIZE);
 	list_add_tail(&(kmem_cache_st.cache_list), &kmem_list_head);
+
+	printk("Init kmem cache ok.\n");
 }
 
 void mm_test(void)

@@ -4,9 +4,12 @@
 #include <wos/list.h>
 
 #define DEFAULT_MEM_SIZE		(64*1024*1024)			/* 64MB */
+
 #define PAGE_SIZE			(4*1024)			/* 4KB */
 #define PAGE_NUM			DEFAULT_MEM_SIZE / PAGE_SIZE	
 #define PAGE_SHIFT			12
+#define PAGE_PDE_NUM			1024
+#define PAGE_PTE_NUM			PAGE_PDE_NUM		
 
 #define KERNEL_MEM_SIZE			(2*1024*1024)			/* 2MB */
 #define KERNEL_MEM_MAP			KERNEL_MEM_SIZE >> PAGE_SHIFT
@@ -25,5 +28,8 @@
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
 
 unsigned int mem_map[PAGE_NUM];
+
+#define PDE_IS_PRESENT(addr)		((addr & 0x00000001) ? 1 : 0)
+#define PTE_IS_PRESENT(addr)		PDE_IS_PRESENT(addr)
 
 #endif

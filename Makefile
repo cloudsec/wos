@@ -4,7 +4,7 @@ CC	=gcc
 CFLAGS	=-pedantic -nostdlib -nostdinc -I include -fomit-frame-pointer -fno-stack-protector
 
 KERNEL_OBJS = boot/load.o kernel/init.o kernel/gdt.o kernel/trap_asm.o kernel/traps.o kernel/timer.o \
-	kernel/sched.o kernel/fork.o kernel/kthread.o kernel/system_call.o kernel/sys.o kernel/panic.o \
+	kernel/sched.o kernel/system_call.o kernel/kthread.o kernel/fork.o kernel/sys.o kernel/panic.o \
 	mm/memory.o mm/slab.o mm/buddy.o mm/page_fault.o fs/fs.o \
 	drivers/keyboard.o drivers/hd.o lib/printk.o drivers/vga.o kernel/spinlock.o lib/string.o
 

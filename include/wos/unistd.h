@@ -1,10 +1,12 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-#define __NR_write		0
+#define __NR_write_s		0
 #define __NR_fork		1
 #define __NR_pause		2
 #define __NR_creat_task		3
+#define __NR_getpid		4
+#define __NR_write_i		5
 
 #define _syscall0(type, name)				\
 type name(void)						\

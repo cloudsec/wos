@@ -36,7 +36,7 @@ startup_32:
         je 1b
 
 .align 2
-	call kernel_init
+	call kernel_start
 2:
 	jmp 2b
 

@@ -1,0 +1,4 @@
+a. rewrite bootloader.
+b. Compute real memory size.
+c. Desgin copy_page_tables().
+d. simple file system.

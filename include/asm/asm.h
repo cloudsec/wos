@@ -18,6 +18,6 @@
 #define outsl(buf, nr, port)	asm("cld;rep;outsl\n\t"::"d"(port), "S"(buf), "c"(nr))
 
 #define set_cr3(value)		asm("movl %0, %%cr3\n"::"m"(value))
-#define invalidate(value)	asm("movl %%eax,%%cr3"::"a" (value))
+#define flush_cr3(value)	asm("movl %%eax,%%cr3"::"a"(value))
 
 #endif

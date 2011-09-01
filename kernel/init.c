@@ -41,19 +41,30 @@ void run_init_task(void)
         }
 }
 
+void run_task2(void);
+
 /*
  * task1 & task2 are started by user mode process with system call support.
  */
 void run_task1(void)
 {
-	for (;;)
-		write_s("B");
+	//creat_task((unsigned int)&run_task2);
+	if (!fork()) {
+		write_s("cccccccc\n");
+		for (;;)
+			;//write_s("B");
+	}
+	else {
+		write_s("dddddddd\n");
+		for (;;)
+			;//write_s("C");
+	}
 }
 
 void run_task2(void)
 {
 	for (;;)
-		write_s("C");
+		write_s("D");
 }
 
 /*
@@ -67,12 +78,22 @@ void run_task3(void)
 
 void init(void)
 {
-	write_s("We are child task pid.\n");
-	for (;;) {
-		int pid = getpid();
-		write_s("We are child task pid.\n");
-		write_i(pid);
+	write_s("I'm child task1.\n");
+	fork();
+	if (!fork()) {
+		write_s("I'm child task2.\n");
+		for (;;)
+			;//write_s("I'm child task1.\n");
 	}
+	else {
+		write_s("I'm father task1.\n");
+	}
+
+	for (;;);
+}
+
+void test(void)
+{
 }
 
 void kernel_start(void)
@@ -100,16 +121,14 @@ void kernel_start(void)
 	//creat_task((unsigned int)&run_task1);
 	//creat_task((unsigned int)&run_task2);
 
-	/* the below code is our init task. */
-	write_s("We are init task.\n");
+	fork();
 	if (!fork()) {
-		init();
+		//init();
+		write_s("I'm child task1.\n");
 	}
 	int pid_f = getpid();
-	write_s("We are father task pid.\n");
-	write_i(pid_f);
 	for (;;) {
-		//write("in idle task.\n");
+		//write_s("We are father task pid.\n");
 		//pause();
 	}
 }

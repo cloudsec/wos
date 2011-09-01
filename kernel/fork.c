@@ -13,8 +13,6 @@
 #include <wos/mm.h>
 #include <wos/debug.h>
 
-//void ret_from_sys_call(void) __asm__("ret_from_sys_call");
-
 extern void ret_from_sys_call(void);
 extern struct task_struct init_task;
 extern struct list_head task_list_head;
@@ -23,7 +21,6 @@ extern unsigned int pg_dir;
 extern struct gdt_desc new_gdt[8192];
 extern unsigned int gdt_desc_idx;
 extern int task_flag;
-extern void run_task1(void);
 
 int last_pid = 0;
 
@@ -97,9 +94,11 @@ int do_fork(unsigned int esp)
         int pid;
 
 	DbgPrint("cs: 0x%x, eip: 0x%x, ds: 0x%x, eax: 0x%x, ebx: 0x%x\n"
-		"ecx: 0x%x, es: 0x%x, fs: 0x%x, eflags: 0x%x\n",
+		"ecx: 0x%x, es: 0x%x, fs: 0x%x, eflags: 0x%x\n"
+		"ss: 0x%x, esp: 0x%x, orig_eax: 0x%x\n",
 		reg->orig_cs, reg->orig_eip, reg->ds, reg->eax, reg->ebx, 
-		reg->ecx, reg->es, reg->fs, reg->eflags);
+		reg->ecx, reg->es, reg->fs, reg->eflags, 
+		reg->ss, reg->esp, reg->error_code);
 
         pid = get_pid();
         if (pid == -1) {
@@ -115,7 +114,7 @@ int do_fork(unsigned int esp)
         }
         printk("Alloc task_struct page at: 0x%x\n", tsk);
 
-	//*tsk = *current;
+	*tsk = *current;
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = tsk + PAGE_SIZE * 2;
         tsk->tss.ss0 = KERNEL_DATA_SEL;
@@ -147,7 +146,7 @@ int do_fork(unsigned int esp)
         tsk->ldt_sel = LDT_SEL(pid);
         tsk->state = TASK_RUNABLE;
         tsk->counter = DEFAULT_COUNTER;
-        tsk->priority = DEFAULT_PRIORITY + 1;
+        tsk->priority = DEFAULT_PRIORITY;
 
         set_tss_desc(new_gdt, (unsigned int)&(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));
         set_ldt_desc(new_gdt, (unsigned int)&(tsk->ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(pid));
@@ -155,8 +154,8 @@ int do_fork(unsigned int esp)
         set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
 
-	//setup_task_pages(tsk);
-	copy_page_tables(tsk);
+	setup_task_pages(tsk);
+	//copy_page_tables(tsk);
 
         list_add_tail(&(tsk->list), &task_list_head);
 
@@ -174,7 +173,7 @@ int sys_creat_task(unsigned int eip)
                 DbgPrint("Get pid failed.\n");
                 return -1;
         }
-        DbgPrint("pid: %d\n", pid);
+        printk("Get new pid: %d\n", pid);
 
         tsk = (struct task_struct *)alloc_page(1);
         if (!tsk) {
@@ -183,6 +182,7 @@ int sys_creat_task(unsigned int eip)
         }
         DbgPrint("Alloc tsk page at: 0x%x\n", tsk);
 
+	*tsk = *current;
         tsk->tss.prev_task_link = 0;
         tsk->tss.esp0 = tsk + PAGE_SIZE * 2;
         tsk->tss.ss0 = KERNEL_DATA_SEL;
@@ -190,7 +190,6 @@ int sys_creat_task(unsigned int eip)
         tsk->tss.ss1 = 0;
         tsk->tss.esp2 = 0;
         tsk->tss.ss2 = 0;
-        //tsk->tss.cr3 = pg_dir;
         tsk->tss.eip = eip;
         tsk->tss.eflags = 0x200;
         tsk->tss.eax = 0;
@@ -224,8 +223,8 @@ int sys_creat_task(unsigned int eip)
         set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
         set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
 
-	//setup_task_pages(tsk);
-	copy_page_tables(tsk);
+	setup_task_pages(tsk);
+	//copy_page_tables(tsk);
 
         list_add_tail(&(tsk->list), &task_list_head);
 

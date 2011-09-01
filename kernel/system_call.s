@@ -72,7 +72,6 @@ ret_from_sys_call:
 	jne 1f
 	cmpl $0x17, ORIG_SS(%esp)		# is kernel data.
 	jne 1f
-						# TODO: handle singals.
 1:
 	RESTORE_ALL
 	addl $4, %esp				# for error_code.

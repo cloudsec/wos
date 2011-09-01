@@ -10,6 +10,7 @@
 #define PAGE_SHIFT			12
 #define PAGE_PDE_NUM			1024
 #define PAGE_PTE_NUM			PAGE_PDE_NUM		
+#define PAGE_ZERO			0
 
 #define KERNEL_MEM_SIZE			(2*1024*1024)			/* 2MB */
 #define KERNEL_MEM_MAP			KERNEL_MEM_SIZE >> PAGE_SHIFT
@@ -29,7 +30,14 @@
 
 unsigned int mem_map[PAGE_NUM];
 
+#define PDE_IS_NONE(addr)		(!(addr & 0x00000fff))
+#define PTE_IS_NONE(addr)		PDE_IS_NONDE(addr)
+
 #define PDE_IS_PRESENT(addr)		((addr & 0x00000001) ? 1 : 0)
+
 #define PTE_IS_PRESENT(addr)		PDE_IS_PRESENT(addr)
+
+typedef unsigned int			pde_t;
+typedef unsigned int			pte_t;
 
 #endif

@@ -17,13 +17,9 @@ static inline _syscall0(int, fork)
 static inline _syscall0(int, pause)
 static inline _syscall1(int, write_s, char*, msg)
 
-unsigned int init_task_stack[1024] = {0};
-unsigned int init_task_stack_ring3[1024] = {0};
+unsigned int init_task_stack[PAGE_SIZE * 2] = {0};
+unsigned int init_task_stack_ring3[PAGE_SIZE] = {0};
 struct task_struct init_task;
-
-unsigned int init_task1_stack[1024] = {0};
-unsigned int init_task1_stack_ring3[1024] = {0};
-struct task_struct init_task1;
 
 void show_task_status(void)
 {
@@ -89,7 +85,7 @@ void schedule(void)
 void setup_init_task(void)
 {
 	init_task.tss.prev_task_link = 0;
-	init_task.tss.esp0 = (unsigned int)&init_task_stack + PAGE_SIZE - 1;
+	init_task.tss.esp0 = (unsigned int)&init_task_stack + PAGE_SIZE * 2;
 	init_task.tss.ss0 = KERNEL_DATA_SEL;
 	init_task.tss.esp1 = 0;
 	init_task.tss.ss1 = 0;
@@ -102,7 +98,7 @@ void setup_init_task(void)
 	init_task.tss.ebx = 0;
 	init_task.tss.ecx = 0;
 	init_task.tss.edx = 0;
-        init_task1.tss.esp = (unsigned int)&init_task_stack_ring3 + PAGE_SIZE;
+        init_task.tss.esp = (unsigned int)&init_task_stack_ring3 + PAGE_SIZE;
 	init_task.tss.ebp = 0;
 	init_task.tss.esi = 0;
 	init_task.tss.edi = 0;
@@ -133,59 +129,10 @@ void setup_init_task(void)
 	init_task.state = TASK_RUNABLE;
 }
 
-void setup_init_task1(void)
-{
-        init_task1.tss.prev_task_link = 0;
-        init_task1.tss.esp0 = (unsigned int)&init_task1_stack + PAGE_SIZE;
-        init_task1.tss.ss0 = KERNEL_DATA_SEL;
-        init_task1.tss.esp1 = 0;
-        init_task1.tss.ss1 = 0;
-        init_task1.tss.esp2 = 0;
-        init_task1.tss.ss2 = 0;
-        init_task1.tss.cr3 = pg_dir;
-        init_task1.tss.eip = run_task1;
-        init_task1.tss.eflags = 0x200;
-        init_task1.tss.eax = 0;
-        init_task1.tss.ebx = 0;
-        init_task1.tss.ecx = 0;
-        init_task1.tss.edx = 0;
-        init_task1.tss.esp = (unsigned int)&init_task1_stack_ring3 + PAGE_SIZE;
-        init_task1.tss.ebp = 0;
-        init_task1.tss.esi = 0;
-        init_task1.tss.edi = 0;
-        init_task1.tss.es = USER_DATA_SEL;
-        init_task1.tss.cs = USER_CODE_SEL;
-        init_task1.tss.ss = USER_DATA_SEL;
-        init_task1.tss.ds = USER_DATA_SEL;
-        init_task1.tss.fs = USER_DATA_SEL;
-        init_task1.tss.gs = USER_DATA_SEL;
-        init_task1.tss.ldt_sel = LDT_SEL(1);
-        init_task1.tss.io_map = 0x80000000;
-
-        init_task1.tss_sel = TSS_SEL(1);
-        init_task1.ldt_sel = LDT_SEL(1);
-        init_task1.pid = 1;
-        init_task1.state = TASK_RUNABLE;
-        init_task1.counter = DEFAULT_COUNTER;
-        init_task1.priority = DEFAULT_PRIORITY;
-
-        /* setup tss & ldt in the gdt.*/
-        set_tss_desc(new_gdt, (unsigned int)&(init_task1.tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(1));
-        set_ldt_desc(new_gdt, (unsigned int)&(init_task1.ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(1));
-
-        /* setup code & data segment selector in the ldt. */
-        set_gdt_desc(init_task1.ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
-        set_gdt_desc(init_task1.ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
-
-        /* move init_task to the task list. */
-        list_add_tail(&(init_task1.list), &task_list_head);
-}
-
 void init_schedule(void)
 {
         INIT_LIST_HEAD(&task_list_head);
 	setup_init_task();
-	//setup_init_task1();
 	
         current = &init_task;
 

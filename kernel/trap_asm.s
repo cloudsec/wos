@@ -317,11 +317,13 @@ general_protection:
 .align 2
 page_fault:
         SAVE_ALL
-        pushl %esp
+	pushl %eax
 	movw $0x10, %ax
 	movw %ax, %ds
 	movw %ax, %es
 	movw %ax, %fs
+	popl %eax
+        pushl %esp
         call do_page_fault
         addl $4, %esp
         RESTORE_ALL

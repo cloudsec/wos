@@ -24,9 +24,14 @@
 #define PAGE_WRITE                      (1<<1)
 #define PAGE_USER                       (1<<2)
 #define PAGE_KERNEL                     (0<<2)
+#define PAGE_READ			(0<<1)
 
 #define PAGE_USER_MODE			(PAGE_PRESENT | PAGE_WRITE | PAGE_USER)
 #define PAGE_KERNEL_MODE		(PAGE_PRESENT | PAGE_WRITE | PAGE_KERNEL)
+
+#define PF_PROT				(1<<0)				/* page fault error code. */
+#define PF_WRITE			(1<<1)
+#define PF_KERNEL			(1<<2)
 
 unsigned int mem_map[PAGE_NUM];
 
@@ -36,6 +41,8 @@ unsigned int mem_map[PAGE_NUM];
 #define PDE_IS_PRESENT(addr)		((addr & 0x00000001) ? 1 : 0)
 
 #define PTE_IS_PRESENT(addr)		PDE_IS_PRESENT(addr)
+
+#define get_pde_index(addr)		(addr >> 22)
 
 typedef unsigned int			pde_t;
 typedef unsigned int			pte_t;

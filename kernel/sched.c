@@ -17,9 +17,15 @@ static inline _syscall0(int, fork)
 static inline _syscall0(int, pause)
 static inline _syscall1(int, write_s, char*, msg)
 
-unsigned int init_task_stack[PAGE_SIZE * 2] = {0};
-unsigned int init_task_stack_ring3[PAGE_SIZE] = {0};
+unsigned int init_task_stack[PAGE_SIZE] = {0};
 struct task_struct init_task;
+
+long user_stack[PAGE_SIZE >> 2];
+
+struct {
+	long * a;
+	short b;
+}stack_start __attribute__((__section__(".data.user_stack"))) = {&user_stack[PAGE_SIZE >> 2], 0x10};
 
 void show_task_status(void)
 {
@@ -85,7 +91,7 @@ void schedule(void)
 void setup_init_task(void)
 {
 	init_task.tss.prev_task_link = 0;
-	init_task.tss.esp0 = (unsigned int)&init_task_stack + PAGE_SIZE * 2;
+	init_task.tss.esp0 = init_task_stack + PAGE_SIZE;
 	init_task.tss.ss0 = KERNEL_DATA_SEL;
 	init_task.tss.esp1 = 0;
 	init_task.tss.ss1 = 0;
@@ -98,7 +104,7 @@ void setup_init_task(void)
 	init_task.tss.ebx = 0;
 	init_task.tss.ecx = 0;
 	init_task.tss.edx = 0;
-        init_task.tss.esp = (unsigned int)&init_task_stack_ring3 + PAGE_SIZE;
+        init_task.tss.esp = 0;
 	init_task.tss.ebp = 0;
 	init_task.tss.esi = 0;
 	init_task.tss.edi = 0;
@@ -122,8 +128,8 @@ void setup_init_task(void)
         set_ldt_desc(new_gdt, (unsigned int)&(init_task.ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(0));
 
         /* setup code & data segment selector in the ldt. */
-        set_gdt_desc(init_task.ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
-        set_gdt_desc(init_task.ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
+        set_gdt_desc(init_task.ldt, CODE_BASE, 0x9ffff, USER_CODE_TYPE, 1);
+        set_gdt_desc(init_task.ldt, DATA_BASE, 0x9ffff, USER_DATA_TYPE, 2);
 
 	/* the init task's state is not impornt, we nerver use it. */
 	init_task.state = TASK_RUNABLE;

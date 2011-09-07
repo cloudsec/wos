@@ -36,7 +36,6 @@ struct idt_desc {
         unsigned int b;
 };
 
-asm(".align 4\n");
 struct idt_desc new_idt[256];
 
 void set_idt_desc(unsigned int base, unsigned int segment_sel, int type, int idx)

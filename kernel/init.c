@@ -78,8 +78,6 @@ void run_task3(void)
 
 void init(void)
 {
-	write_s("I'm child task1.\n");
-	fork();
 	if (!fork()) {
 		write_s("I'm child task2.\n");
 		for (;;)
@@ -90,10 +88,6 @@ void init(void)
 	}
 
 	for (;;);
-}
-
-void test(void)
-{
 }
 
 void kernel_start(void)
@@ -108,27 +102,27 @@ void kernel_start(void)
 	init_schedule();
 	init_timer(100);
 
-	sti();
 	//setup_dpt();
 	//hd_test();
 
 	//creat_kthread((unsigned int)&run_task3);
-	printk("Move to ring3.\n");
+	//printk("Move to ring3.\n");
 
 	//timer_test();
 	/* start move to ring3 mode. */
+	sti();
 	MOVE_TO_RING3()
 	//creat_task((unsigned int)&run_task1);
 	//creat_task((unsigned int)&run_task2);
 
-	fork();
+/*
 	if (!fork()) {
 		//init();
-		write_s("I'm child task1.\n");
+		;//write_s("I'm child task.\n");
 	}
-	int pid_f = getpid();
+*/
 	for (;;) {
-		//write_s("We are father task pid.\n");
-		//pause();
+		write_s("I'm idle task.\n");
+		pause();
 	}
 }

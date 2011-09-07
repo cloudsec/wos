@@ -20,8 +20,9 @@
 
 #define CODE_LIMIT              	0xffffffff
 #define DATA_LIMIT              	CODE_LIMIT
-#define USER_CODE_LIMIT			0xffff
-#define USER_DATA_LIMIT			0xffff
+
+#define USER_CODE_LIMIT			0xffffffff
+#define USER_DATA_LIMIT			0xffffffff
 #define TSS_LIMIT			0x68
 #define LDT_LIMIT			0x40
 

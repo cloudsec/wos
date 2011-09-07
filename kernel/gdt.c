@@ -3,7 +3,9 @@
 
 extern struct task_struct init_task;
 
-struct gdt_desc new_gdt[8192] = {0,};
+//struct gdt_desc new_gdt[8192] __attribute__((__section__(".data"))) = {0,};
+struct gdt_desc new_gdt[8192] = {0};
+
 unsigned int gdt_desc_idx = KERNEL_CODE_IDX;
 
 void __set_gdt_desc(struct gdt_desc *addr, unsigned int base, unsigned int limit,

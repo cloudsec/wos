@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xb2049008. after alignment, vector=0xb204a000
+00000000000i[MEM0 ] allocated memory at 0xb1f84008. after alignment, vector=0xb1f85000
 00000000000i[MEM0 ] 64.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=64
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Thu Sep  1 15:48:26 2011 (time0=1314863306)
+00000000000i[CMOS ] Setting initial clock to: Wed Sep  7 10:19:18 2011 (time0=1315361958)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'wos.img' ro=0, h=2,t=80,spt=18
@@ -105,59 +105,51 @@
 00000000000i[XGUI ] [x] Mouse off
 00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000003305i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00000318057i[KBD  ] reset-disable command received
-00000444815i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00000444886i[VGA  ] VBE known Display Interface b0c0
-00000444918i[VGA  ] VBE known Display Interface b0c5
-00000447843i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
+00000321043i[KBD  ] reset-disable command received
+00000447801i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
+00000447872i[VGA  ] VBE known Display Interface b0c0
+00000447904i[VGA  ] VBE known Display Interface b0c5
+00000450829i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
 00000600000i[XGUI ] charmap update. Font Height is 16
-00000760532i[BIOS ] Starting rombios32
-00000761029i[BIOS ] Shutdown flag 0
-00000761710i[BIOS ] ram_size=0x04000000
-00000762188i[BIOS ] ram_end=64MB
-00000802748i[BIOS ] Found 1 cpu(s)
-00000821735i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00000834412i[BIOS ] bios_table_cur_addr: 0x000fb928
-00000846880i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00004727140i[BIOS ] IDE time out
-00016897677i[BIOS ] Booting from 0000:7c00
+00000763518i[BIOS ] Starting rombios32
+00000764015i[BIOS ] Shutdown flag 0
+00000764696i[BIOS ] ram_size=0x04000000
+00000765174i[BIOS ] ram_end=64MB
+00000805746i[BIOS ] Found 1 cpu(s)
+00000824733i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
+00000837410i[BIOS ] bios_table_cur_addr: 0x000fb928
+00000849878i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
+00004730138i[BIOS ] IDE time out
+00016897675i[BIOS ] Booting from 0000:7c00
 00017000000i[XGUI ] charmap update. Font Height is 16
-00019499594i[FDD  ] partial read() on floppy image returns 428/512
-00019545806i[FDD  ] read() on floppy image returns 0
-00019591999i[FDD  ] read() on floppy image returns 0
-00019638211i[FDD  ] read() on floppy image returns 0
-00019684423i[FDD  ] read() on floppy image returns 0
-00019730635i[FDD  ] read() on floppy image returns 0
-00019776847i[FDD  ] read() on floppy image returns 0
-00019823040i[FDD  ] read() on floppy image returns 0
-00019869252i[FDD  ] read() on floppy image returns 0
-00019915464i[FDD  ] read() on floppy image returns 0
-00019961676i[FDD  ] read() on floppy image returns 0
-00020007869i[FDD  ] read() on floppy image returns 0
-00020054081i[FDD  ] read() on floppy image returns 0
-00020100293i[FDD  ] read() on floppy image returns 0
-00020146505i[FDD  ] read() on floppy image returns 0
-00020192717i[FDD  ] read() on floppy image returns 0
-00020238910i[FDD  ] read() on floppy image returns 0
-00340400000i[     ] Ctrl-C detected in signal handler.
-00340400000i[     ] dbg: Quit
-00340400000i[CPU0 ] CPU is in protected mode (active)
-00340400000i[CPU0 ] CS.d_b = 32 bit
-00340400000i[CPU0 ] SS.d_b = 32 bit
-00340400000i[CPU0 ] | EAX=00000000  EBX=00009000  ECX=00000000  EDX=000003d5
-00340400000i[CPU0 ] | ESP=00006c9c  EBP=00000000  ESI=00019000  EDI=0000029a
-00340400000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00340400000i[CPU0 ] | SEG selector     base    limit G D
-00340400000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00340400000i[CPU0 ] |  CS:000f( 0001| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] |  DS:0017( 0002| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] |  SS:0017( 0002| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] |  ES:0017( 0002| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] |  FS:0017( 0002| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] |  GS:0017( 0002| 1|  3) 00000000 0fffffff 1 1
-00340400000i[CPU0 ] | EIP=00000245 (00000245)
-00340400000i[CPU0 ] | CR0=0xe0000019 CR2=0x00000000
-00340400000i[CPU0 ] | CR3=0x00218000 CR4=0x00000000
-00340400000i[CMOS ] Last time is 1314863391 (Thu Sep  1 15:49:51 2011)
-00340400000i[XGUI ] Exit
-00340400000i[CTRL ] quit_sim called with exit code 0
+00019869250i[FDD  ] partial read() on floppy image returns 492/512
+00019915462i[FDD  ] read() on floppy image returns 0
+00019961674i[FDD  ] read() on floppy image returns 0
+00020007867i[FDD  ] read() on floppy image returns 0
+00020054079i[FDD  ] read() on floppy image returns 0
+00020100291i[FDD  ] read() on floppy image returns 0
+00020146503i[FDD  ] read() on floppy image returns 0
+00020192715i[FDD  ] read() on floppy image returns 0
+00020238908i[FDD  ] read() on floppy image returns 0
+00074664000i[     ] Ctrl-C detected in signal handler.
+00074664000i[     ] dbg: Quit
+00074664000i[CPU0 ] CPU is in protected mode (active)
+00074664000i[CPU0 ] CS.d_b = 32 bit
+00074664000i[CPU0 ] SS.d_b = 32 bit
+00074664000i[CPU0 ] | EAX=0000000f  EBX=0000541b  ECX=00000000  EDX=000003d4
+00074664000i[CPU0 ] | ESP=0001be7c  EBP=00000000  ESI=00000000  EDI=00000e68
+00074664000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
+00074664000i[CPU0 ] | SEG selector     base    limit G D
+00074664000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00074664000i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00074664000i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00074664000i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00074664000i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00074664000i[CPU0 ] |  FS:0017( 0002| 1|  3) 00000000 9fffffff 1 1
+00074664000i[CPU0 ] |  GS:0018( 0003| 0|  0) 000b8000 0fffffff 1 1
+00074664000i[CPU0 ] | EIP=00004efd (00004efd)
+00074664000i[CPU0 ] | CR0=0xe0000011 CR2=0x00000000
+00074664000i[CPU0 ] | CR3=0x00100000 CR4=0x00000000
+00074664000i[CMOS ] Last time is 1315361976 (Wed Sep  7 10:19:36 2011)
+00074664000i[XGUI ] Exit
+00074664000i[CTRL ] quit_sim called with exit code 0

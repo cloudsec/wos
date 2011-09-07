@@ -4,10 +4,12 @@
 .org 0
 startup_32:
 	movl $0x10, %eax
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %ss
+	mov %ax, %ds
+	mov %ax, %es
+	mov %ax, %fs
+	mov %ax, %gs
+	#lss stack_start, %esp
+	mov %ax, %ss
 	movl $init_stack, %esp
 
 	cld
@@ -27,7 +29,9 @@ startup_32:
 	mov %ax, %es
 	mov %ax, %fs
 	mov %ax, %gs
+	mov %ax, %ss
 	movl $init_stack, %esp
+	#lss stack_start, %esp
 
         xorl %eax, %eax
 1:      incl %eax
@@ -52,7 +56,10 @@ new_idt48:
 	.word 256*8 - 1
 	.long new_idt
 
+.data
 .align 2
-	.fill 1024,4,0
+	#.fill 2048,4,0
+	.fill 8192,1,0
 init_stack:
 	.word init_stack
+

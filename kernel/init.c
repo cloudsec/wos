@@ -48,7 +48,6 @@ void run_task2(void);
  */
 void run_task1(void)
 {
-	//creat_task((unsigned int)&run_task2);
 	if (!fork()) {
 		write_s("cccccccc\n");
 		for (;;)
@@ -98,7 +97,7 @@ void kernel_start(void)
 	init_trap();
 	init_mm();
 	//init_fs();
-	init_keyboard(); 
+	//init_keyboard(); 
 	init_schedule();
 	init_timer(100);
 
@@ -106,7 +105,7 @@ void kernel_start(void)
 	//hd_test();
 
 	//creat_kthread((unsigned int)&run_task3);
-	//printk("Move to ring3.\n");
+	printk("Move to ring3.\n");
 
 	//timer_test();
 	/* start move to ring3 mode. */
@@ -118,11 +117,11 @@ void kernel_start(void)
 /*
 	if (!fork()) {
 		//init();
-		;//write_s("I'm child task.\n");
+		write_s("I'm child task.\n");
 	}
 */
 	for (;;) {
-		write_s("I'm idle task.\n");
+		//write_s("I'm idle task.\n");
 		pause();
 	}
 }

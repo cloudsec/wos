@@ -21,8 +21,10 @@ lib:
 
 wos: $(KERNEL_OBJS)
 	$(AS) -o boot/boot.o boot/boot.s
-	$(LD) --oformat binary -N -e _start -Ttext 0x7c00 -o boot.bin boot/boot.o
-	$(LD) --oformat binary -N -e startup_32 -Ttext 0x0 -o kernel.bin $(KERNEL_OBJS) 
+	#$(LD) --oformat binary -N -e _start -Ttext 0x7c00 -o boot.bin boot/boot.o
+	#$(LD) --oformat binary -N -e startup_32 -Ttext 0x0 -o kernel.bin $(KERNEL_OBJS) 
+	$(LD) -o boot.bin boot/boot.o -N -T boot.lds
+	$(LD) -o kernel.bin $(KERNEL_OBJS) -N -m elf_i386 -T kernel.lds
 
 image:
 	cat boot.bin kernel.bin > wos.img

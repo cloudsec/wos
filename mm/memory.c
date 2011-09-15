@@ -15,12 +15,12 @@
 extern void page_fault();
 
 /* set kernel page dectory at 0x100000(1MB). */
-pde_t pg_dir = 0x100000;
+pde_t pg_dir = 0x300000;
 
 void setup_kernel_pte(void)
 {
-        pde_t *kernel_pde = (pde_t *)0x100000;
-        pte_t *kernel_pte = (pte_t *)0x101000;
+        pde_t *kernel_pde = (pde_t *)0x300000;
+        pte_t *kernel_pte = (pte_t *)0x301000;
         pte_t pte_addr = 0x101000, py_addr = 0;
 	unsigned int pde_idx, pte_idx;
 	

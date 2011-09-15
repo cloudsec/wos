@@ -101,22 +101,21 @@ int do_fork(unsigned int esp)
 	set_tss_desc(new_gdt, (unsigned int)&(tsk->tss), TSS_LIMIT, TSS_TYPE, TSS_IDX(pid));
 	set_ldt_desc(new_gdt, (unsigned int)&(tsk->ldt), LDT_LIMIT, LDT_TYPE, LDT_IDX(pid));
 
-/*
 	set_gdt_desc(tsk->ldt, CODE_BASE, USER_CODE_LIMIT, USER_CODE_TYPE, 1);
 	set_gdt_desc(tsk->ldt, DATA_BASE, USER_DATA_LIMIT, USER_DATA_TYPE, 2);
-*/
 
 	//setup_task_pages(tsk);
 	copy_page_tables(tsk);
 
 	list_add_tail(&(tsk->list), &task_list_head);
 
-	DbgPrint("cs: 0x%x, eip: 0x%x, ds: 0x%x, eax: 0x%x, ebx: 0x%x\n"
+	printk("cs: 0x%x, eip: 0x%x, ds: 0x%x, eax: 0x%x, ebx: 0x%x\n"
 		"ecx: 0x%x, es: 0x%x, fs: 0x%x, eflags: 0x%x\n"
 		"ss: 0x%x, esp: 0x%x\n",
 		tsk->tss.cs, tsk->tss.eip, tsk->tss.ds, tsk->tss.eax, tsk->tss.ebx, 
 		tsk->tss.ecx, tsk->tss.es, tsk->tss.fs, tsk->tss.eflags, 
 		tsk->tss.ss, tsk->tss.esp);
+	printk("cs: 0x%x, ds: 0x%x\n", tsk->tss.cs, tsk->tss.ds);
 
 	return pid;
 }

@@ -1,7 +1,5 @@
 .text 
 .global startup_32
-.include "include/wos/kernel.h"
-.org 0
 startup_32:
 	movl $0x10, %eax
 	mov %ax, %ds
@@ -11,13 +9,12 @@ startup_32:
 	#lss stack_start, %esp
 	mov %ax, %ss
 	movl $init_stack, %esp
-
-	cld
+	
+	cld					# move the reset kernel to 0x200.
 	movl $0x10200, %esi
 	movl $0x200, %edi
-	movl $(KERNEL_SECT - 1) << 7, %ecx
-	rep
-	movsl
+	movl $0x4000, %ecx			# current kernel is not bigger than 64kb.
+	rep movsl
 
 	call setup_gdt
 	call setup_idt
@@ -44,22 +41,18 @@ startup_32:
 2:
 	jmp 2b
 
-.data
+#.data
 .align 2
 new_gdt48:
         .word 8192*8 - 1
         .long new_gdt
 
-.data
+#.data
 .align 2
 new_idt48:
 	.word 256*8 - 1
 	.long new_idt
 
-.data
-.align 2
-	#.fill 2048,4,0
-	.fill 8192,1,0
+	.fill 1024,4,0
 init_stack:
 	.word init_stack
-

@@ -1,22 +1,32 @@
-/* OUTPUT_ARCH(i386) */
-OUTPUT_FORMAT("binary")
+LOAD_OFFSET = 0x0;
+OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
+OUTPUT_ARCH(i386)
 ENTRY(startup_32)
 SECTIONS
 {
-        . = 0x0;
-        .text : {
-                *(.text)
-                . = ALIGN(4096);
-        }
+	. = (LOAD_OFFSET + 0x100000);
+  	_text = .;			
+  	.text : AT(ADDR(.text) - LOAD_OFFSET) {
+		*(.text)
+	} = 0x9090
+	_etext = .;			
 
-        .data : {
-                *(.rodata)
-                *(.data)
-                . = ALIGN(4096);
-        }
+	.rodata : AT(ADDR(.rodata) - LOAD_OFFSET) {
+		*(.rodata)
+		*(.rodata.*)
+	}
 
-        .bss : {
-                *(.bss)
-                . = ALIGN(4096);
-        }
+	. = ALIGN(16);
+	.data : AT(ADDR(.data) - LOAD_OFFSET) {	
+		*(.data)
+		CONSTRUCTORS
+	}
+	_edata = .;
+
+	. = ALIGN(16);
+	__bss_start = .;
+	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+		*(.bss)
+	}
+	_end = .;
 }

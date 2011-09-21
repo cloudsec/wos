@@ -12,7 +12,7 @@
 #define PAGE_PTE_NUM			PAGE_PDE_NUM		
 #define PAGE_ZERO			0
 
-#define KERNEL_MEM_SIZE			(5*1024*1024)			/* 2MB */
+#define KERNEL_MEM_SIZE			(4*1024*1024)			/* 4MB */
 #define KERNEL_MEM_MAP			KERNEL_MEM_SIZE >> PAGE_SHIFT
 #define KERNEL_PDE_NUM			16
 

@@ -1,21 +1,10 @@
+/*
+ * load.s (c) 2011	wzt
+ *
+ */
 .text 
 .global startup_32
 startup_32:
-	movl $0x10, %eax
-	mov %ax, %ds
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
-	#lss stack_start, %esp
-	mov %ax, %ss
-	movl $init_stack, %esp
-	
-	cld					# move the reset kernel to 0x200.
-	movl $0x10200, %esi
-	movl $0x200, %edi
-	movl $0x4000, %ecx			# current kernel is not bigger than 64kb.
-	rep movsl
-
 	call setup_gdt
 	call setup_idt
 	lgdt new_gdt48
@@ -27,8 +16,7 @@ startup_32:
 	mov %ax, %fs
 	mov %ax, %gs
 	mov %ax, %ss
-	movl $init_stack, %esp
-	#lss stack_start, %esp
+	movl $0x2000, %esp
 
         xorl %eax, %eax
 1:      incl %eax
@@ -36,7 +24,6 @@ startup_32:
         cmpl %eax, 0x100000
         je 1b
 
-.align 2
 	call kernel_start
 2:
 	jmp 2b
@@ -53,6 +40,7 @@ new_idt48:
 	.word 256*8 - 1
 	.long new_idt
 
-	.fill 1024,4,0
-init_stack:
-	.word init_stack
+#.data
+#	.fill 2048,4,0
+#init_stack:
+#	.word init_stack

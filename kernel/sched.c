@@ -17,15 +17,23 @@ static inline _syscall0(int, fork)
 static inline _syscall0(int, pause)
 static inline _syscall1(int, write_s, char*, msg)
 
-unsigned int init_task_stack[PAGE_SIZE] = {0};
+char init_task_stack[PAGE_SIZE] = {0};
 struct task_struct init_task;
 
-long user_stack[PAGE_SIZE >> 2];
+char user_stack[PAGE_SIZE] = {0};
+char init_user_stack[PAGE_SIZE] = {0};
 
+/*
 struct {
 	long * a;
 	short b;
 }stack_start __attribute__((__section__(".data.user_stack"))) = {&user_stack[PAGE_SIZE >> 2], 0x10};
+*/
+
+struct {
+	long *a;
+	short b;
+}stack_start = {&user_stack, 0x10};
 
 void show_task_status(void)
 {

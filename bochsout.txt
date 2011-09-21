@@ -29,13 +29,13 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe 
-00000000000i[MEM0 ] allocated memory at 0xb1fc9008. after alignment, vector=0xb1fca000
+00000000000i[MEM0 ] allocated memory at 0xb1f03008. after alignment, vector=0xb1f04000
 00000000000i[MEM0 ] 64.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=64
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
 00000000000i[MEM0 ] rom at 0xc0000/40448 ('/usr/local/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Thu Sep 15 16:58:26 2011 (time0=1316077106)
+00000000000i[CMOS ] Setting initial clock to: Wed Sep 21 16:31:58 2011 (time0=1316593918)
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[DMA  ] channel 2 used by Floppy Drive
 00000000000i[FDD  ] fd0: 'wos.img' ro=0, h=2,t=80,spt=18
@@ -105,280 +105,79 @@
 00000000000i[XGUI ] [x] Mouse off
 00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000003305i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00000323049i[KBD  ] reset-disable command received
-00000449807i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00000449878i[VGA  ] VBE known Display Interface b0c0
-00000449910i[VGA  ] VBE known Display Interface b0c5
-00000452835i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
+00000318057i[KBD  ] reset-disable command received
+00000444815i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
+00000444886i[VGA  ] VBE known Display Interface b0c0
+00000444918i[VGA  ] VBE known Display Interface b0c5
+00000447843i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
 00000600000i[XGUI ] charmap update. Font Height is 16
-00000765524i[BIOS ] Starting rombios32
-00000766021i[BIOS ] Shutdown flag 0
-00000766702i[BIOS ] ram_size=0x04000000
-00000767180i[BIOS ] ram_end=64MB
-00000807788i[BIOS ] Found 1 cpu(s)
-00000826775i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00000839452i[BIOS ] bios_table_cur_addr: 0x000fb928
-00000851920i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00004732180i[BIOS ] IDE time out
+00000760532i[BIOS ] Starting rombios32
+00000761029i[BIOS ] Shutdown flag 0
+00000761710i[BIOS ] ram_size=0x04000000
+00000762188i[BIOS ] ram_end=64MB
+00000802748i[BIOS ] Found 1 cpu(s)
+00000821735i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
+00000834412i[BIOS ] bios_table_cur_addr: 0x000fb928
+00000846880i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
+00004727140i[BIOS ] IDE time out
 00016897677i[BIOS ] Booting from 0000:7c00
 00017000000i[XGUI ] charmap update. Font Height is 16
-00020667258i[FDD  ] partial read() on floppy image returns 428/512
-00020735993e[CPU0 ] fetch_raw_descriptor: GDT: index (17) 2 > limit (0)
-00020735993e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00020735993e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00020735993i[CPU0 ] CPU is in protected mode (active)
-00020735993i[CPU0 ] CS.d_b = 32 bit
-00020735993i[CPU0 ] SS.d_b = 32 bit
-00020735993i[CPU0 ] | EAX=00000010  EBX=0000a200  ECX=00000000  EDX=00008e00
-00020735993i[CPU0 ] | ESP=00004069  EBP=00007ceb  ESI=00020200  EDI=00010200
-00020735993i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af PF cf
-00020735993i[CPU0 ] | SEG selector     base    limit G D
-00020735993i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00020735993i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00020735993i[CPU0 ] | EIP=00000043 (00000043)
-00020735993i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-00020735993i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00020735993e[CPU0 ] exception(): 3rd (13) exception with no resolution, shutdown status is 00h, resetting
-00020735993i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
-00020735993i[CPU0 ] cpu hardware reset
-00020735993i[APIC0] allocate APIC id=0 (MMIO enabled) to 0x00000000fee00000
-00020735993i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
-00020735993i[CPU0 ] CPUID[0x00000001]: 00000f03 00000800 00000000 07cbfbff
-00020735993i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x00000007]: 00000000 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
-00020735993i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
-00020735993i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
-00020735993i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
-00020735993i[     ] reset of 'unmapped' plugin device by virtual method
-00020735993i[     ] reset of 'biosdev' plugin device by virtual method
-00020735993i[     ] reset of 'speaker' plugin device by virtual method
-00020735993i[     ] reset of 'extfpuirq' plugin device by virtual method
-00020735993i[     ] reset of 'iodebug' plugin device by virtual method
-00020735993i[     ] reset of 'ioapic' plugin device by virtual method
-00020735993i[     ] reset of 'keyboard' plugin device by virtual method
-00020735993i[     ] reset of 'harddrv' plugin device by virtual method
-00020735993i[     ] reset of 'serial' plugin device by virtual method
-00020735993i[     ] reset of 'parallel' plugin device by virtual method
-00020739299i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00021054074i[KBD  ] reset-disable command received
-00021180794i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00021180865i[VGA  ] VBE known Display Interface b0c0
-00021180897i[VGA  ] VBE known Display Interface b0c5
-00021183822i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
-00021400000i[XGUI ] charmap update. Font Height is 16
-00021496511i[BIOS ] Starting rombios32
-00021497008i[BIOS ] Shutdown flag 0
-00021497689i[BIOS ] ram_size=0x04000000
-00021498167i[BIOS ] ram_end=64MB
-00021538751i[BIOS ] Found 1 cpu(s)
-00021557738i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00021570415i[BIOS ] bios_table_cur_addr: 0x000fb928
-00021582883i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00025463143i[BIOS ] IDE time out
-00037633670i[BIOS ] Booting from 0000:7c00
-00037800000i[XGUI ] charmap update. Font Height is 16
-00041403251i[FDD  ] partial read() on floppy image returns 428/512
-00041471986e[CPU0 ] fetch_raw_descriptor: GDT: index (17) 2 > limit (0)
-00041471986e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00041471986e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00041471986i[CPU0 ] CPU is in protected mode (active)
-00041471986i[CPU0 ] CS.d_b = 32 bit
-00041471986i[CPU0 ] SS.d_b = 32 bit
-00041471986i[CPU0 ] | EAX=00000010  EBX=0000a200  ECX=00000000  EDX=00008e00
-00041471986i[CPU0 ] | ESP=00004069  EBP=00007ceb  ESI=00020200  EDI=00010200
-00041471986i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af PF cf
-00041471986i[CPU0 ] | SEG selector     base    limit G D
-00041471986i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00041471986i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00041471986i[CPU0 ] | EIP=00000043 (00000043)
-00041471986i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-00041471986i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00041471986e[CPU0 ] exception(): 3rd (13) exception with no resolution, shutdown status is 00h, resetting
-00041471986i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
-00041471986i[CPU0 ] cpu hardware reset
-00041471986i[APIC0] allocate APIC id=0 (MMIO enabled) to 0x00000000fee00000
-00041471986i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
-00041471986i[CPU0 ] CPUID[0x00000001]: 00000f03 00000800 00000000 07cbfbff
-00041471986i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x00000007]: 00000000 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
-00041471986i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
-00041471986i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
-00041471986i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
-00041471986i[     ] reset of 'unmapped' plugin device by virtual method
-00041471986i[     ] reset of 'biosdev' plugin device by virtual method
-00041471986i[     ] reset of 'speaker' plugin device by virtual method
-00041471986i[     ] reset of 'extfpuirq' plugin device by virtual method
-00041471986i[     ] reset of 'iodebug' plugin device by virtual method
-00041471986i[     ] reset of 'ioapic' plugin device by virtual method
-00041471986i[     ] reset of 'keyboard' plugin device by virtual method
-00041471986i[     ] reset of 'harddrv' plugin device by virtual method
-00041471986i[     ] reset of 'serial' plugin device by virtual method
-00041471986i[     ] reset of 'parallel' plugin device by virtual method
-00041475292i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00041790067i[KBD  ] reset-disable command received
-00041916787i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00041916858i[VGA  ] VBE known Display Interface b0c0
-00041916890i[VGA  ] VBE known Display Interface b0c5
-00041919815i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
-00042000000i[XGUI ] charmap update. Font Height is 16
-00042232504i[BIOS ] Starting rombios32
-00042233001i[BIOS ] Shutdown flag 0
-00042233682i[BIOS ] ram_size=0x04000000
-00042234160i[BIOS ] ram_end=64MB
-00042274756i[BIOS ] Found 1 cpu(s)
-00042293743i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00042306420i[BIOS ] bios_table_cur_addr: 0x000fb928
-00042318888i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00046199148i[BIOS ] IDE time out
-00058369665i[BIOS ] Booting from 0000:7c00
-00058400000i[XGUI ] charmap update. Font Height is 16
-00058600000i[XGUI ] charmap update. Font Height is 16
-00062139246i[FDD  ] partial read() on floppy image returns 428/512
-00062207981e[CPU0 ] fetch_raw_descriptor: GDT: index (17) 2 > limit (0)
-00062207981e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00062207981e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00062207981i[CPU0 ] CPU is in protected mode (active)
-00062207981i[CPU0 ] CS.d_b = 32 bit
-00062207981i[CPU0 ] SS.d_b = 32 bit
-00062207981i[CPU0 ] | EAX=00000010  EBX=0000a200  ECX=00000000  EDX=00008e00
-00062207981i[CPU0 ] | ESP=00004069  EBP=00007ceb  ESI=00020200  EDI=00010200
-00062207981i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af PF cf
-00062207981i[CPU0 ] | SEG selector     base    limit G D
-00062207981i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00062207981i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00062207981i[CPU0 ] | EIP=00000043 (00000043)
-00062207981i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-00062207981i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00062207981e[CPU0 ] exception(): 3rd (13) exception with no resolution, shutdown status is 00h, resetting
-00062207981i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
-00062207981i[CPU0 ] cpu hardware reset
-00062207981i[APIC0] allocate APIC id=0 (MMIO enabled) to 0x00000000fee00000
-00062207981i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
-00062207981i[CPU0 ] CPUID[0x00000001]: 00000f03 00000800 00000000 07cbfbff
-00062207981i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x00000007]: 00000000 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
-00062207981i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
-00062207981i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
-00062207981i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
-00062207981i[     ] reset of 'unmapped' plugin device by virtual method
-00062207981i[     ] reset of 'biosdev' plugin device by virtual method
-00062207981i[     ] reset of 'speaker' plugin device by virtual method
-00062207981i[     ] reset of 'extfpuirq' plugin device by virtual method
-00062207981i[     ] reset of 'iodebug' plugin device by virtual method
-00062207981i[     ] reset of 'ioapic' plugin device by virtual method
-00062207981i[     ] reset of 'keyboard' plugin device by virtual method
-00062207981i[     ] reset of 'harddrv' plugin device by virtual method
-00062207981i[     ] reset of 'serial' plugin device by virtual method
-00062207981i[     ] reset of 'parallel' plugin device by virtual method
-00062211287i[BIOS ] $Revision: 1.257 $ $Date: 2011/01/26 09:52:02 $
-00062526062i[KBD  ] reset-disable command received
-00062652782i[VBIOS] VGABios $Id: vgabios.c,v 1.69 2009/04/07 18:18:20 vruppert Exp $
-00062652853i[VGA  ] VBE known Display Interface b0c0
-00062652885i[VGA  ] VBE known Display Interface b0c5
-00062655810i[VBIOS] VBE Bios $Id: vbe.c,v 1.62 2009/01/25 15:46:25 vruppert Exp $
-00062800000i[XGUI ] charmap update. Font Height is 16
-00062968499i[BIOS ] Starting rombios32
-00062968996i[BIOS ] Shutdown flag 0
-00062969677i[BIOS ] ram_size=0x04000000
-00062970155i[BIOS ] ram_end=64MB
-00063010751i[BIOS ] Found 1 cpu(s)
-00063029738i[BIOS ] bios_table_addr: 0x000fb928 end=0x000fcc00
-00063042415i[BIOS ] bios_table_cur_addr: 0x000fb928
-00063054883i[BIOS ] ata0-0: PCHS=203/16/63 translation=none LCHS=203/16/63
-00066935143i[BIOS ] IDE time out
-00079105660i[BIOS ] Booting from 0000:7c00
-00079200000i[XGUI ] charmap update. Font Height is 16
-00082875241i[FDD  ] partial read() on floppy image returns 428/512
-00082943976e[CPU0 ] fetch_raw_descriptor: GDT: index (17) 2 > limit (0)
-00082943976e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00082943976e[CPU0 ] fetch_raw_descriptor: GDT: index (f) 1 > limit (0)
-00082943976i[CPU0 ] CPU is in protected mode (active)
-00082943976i[CPU0 ] CS.d_b = 32 bit
-00082943976i[CPU0 ] SS.d_b = 32 bit
-00082943976i[CPU0 ] | EAX=00000010  EBX=0000a200  ECX=00000000  EDX=00008e00
-00082943976i[CPU0 ] | ESP=00004069  EBP=00007ceb  ESI=00020200  EDI=00010200
-00082943976i[CPU0 ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af PF cf
-00082943976i[CPU0 ] | SEG selector     base    limit G D
-00082943976i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00082943976i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00082943976i[CPU0 ] | EIP=00000043 (00000043)
-00082943976i[CPU0 ] | CR0=0x60000011 CR2=0x00000000
-00082943976i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00082943976e[CPU0 ] exception(): 3rd (13) exception with no resolution, shutdown status is 00h, resetting
-00082943976i[SYS  ] bx_pc_system_c::Reset(HARDWARE) called
-00082943976i[CPU0 ] cpu hardware reset
-00082943976i[APIC0] allocate APIC id=0 (MMIO enabled) to 0x00000000fee00000
-00082943976i[CPU0 ] CPUID[0x00000000]: 00000003 756e6547 6c65746e 49656e69
-00082943976i[CPU0 ] CPUID[0x00000001]: 00000f03 00000800 00000000 07cbfbff
-00082943976i[CPU0 ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x00000007]: 00000000 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x80000000]: 80000004 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x80000001]: 00000000 00000000 00000000 00000000
-00082943976i[CPU0 ] CPUID[0x80000002]: 20202020 20202020 20202020 6e492020
-00082943976i[CPU0 ] CPUID[0x80000003]: 286c6574 50202952 69746e65 52286d75
-00082943976i[CPU0 ] CPUID[0x80000004]: 20342029 20555043 20202020 00202020
-00082943976i[     ] reset of 'unmapped' plugin device by virtual method
-00082943976i[     ] reset of 'biosdev' plugin device by virtual method
-00082943976i[     ] reset of 'speaker' plugin device by virtual method
-00082943976i[     ] reset of 'extfpuirq' plugin device by virtual method
-00082943976i[     ] reset of 'iodebug' plugin device by virtual method
-00082943976i[     ] reset of 'ioapic' plugin device by virtual method
-00082943976i[     ] reset of 'keyboard' plugin device by virtual method
-00082943976i[     ] reset of 'harddrv' plugin device by virtual method
-00082943976i[     ] reset of 'serial' plugin device by virtual method
-00082943976i[     ] reset of 'parallel' plugin device by virtual method
-00082943977i[     ] dbg: Quit
-00082943977i[CPU0 ] CPU is in real mode (active)
-00082943977i[CPU0 ] CS.d_b = 16 bit
-00082943977i[CPU0 ] SS.d_b = 16 bit
-00082943977i[CPU0 ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000f03
-00082943977i[CPU0 ] | ESP=00000000  EBP=00000000  ESI=00000000  EDI=00000000
-00082943977i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
-00082943977i[CPU0 ] | SEG selector     base    limit G D
-00082943977i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00082943977i[CPU0 ] |  CS:f000( 1e00| 0|  0) ffff0000 0000ffff 0 0
-00082943977i[CPU0 ] |  DS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00082943977i[CPU0 ] |  SS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00082943977i[CPU0 ] |  ES:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00082943977i[CPU0 ] |  FS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00082943977i[CPU0 ] |  GS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
-00082943977i[CPU0 ] | EIP=0000fff0 (0000fff0)
-00082943977i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
-00082943977i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00082943977i[CMOS ] Last time is 1316077126 (Thu Sep 15 16:58:46 2011)
-00082943977i[XGUI ] Exit
-00082943977i[CTRL ] quit_sim called with exit code 0
+00019188607i[FDD  ] partial read() on floppy image returns 12/512
+00019234819i[FDD  ] read() on floppy image returns 0
+00019281031i[FDD  ] read() on floppy image returns 0
+00019327243i[FDD  ] read() on floppy image returns 0
+00019373436i[FDD  ] read() on floppy image returns 0
+00019419648i[FDD  ] read() on floppy image returns 0
+00019465860i[FDD  ] read() on floppy image returns 0
+00019512072i[FDD  ] read() on floppy image returns 0
+00019558284i[FDD  ] read() on floppy image returns 0
+00019604477i[FDD  ] read() on floppy image returns 0
+00019650689i[FDD  ] read() on floppy image returns 0
+00019696901i[FDD  ] read() on floppy image returns 0
+00019743113i[FDD  ] read() on floppy image returns 0
+00019789306i[FDD  ] read() on floppy image returns 0
+00019835518i[FDD  ] read() on floppy image returns 0
+00019881730i[FDD  ] read() on floppy image returns 0
+00019927942i[FDD  ] read() on floppy image returns 0
+00019974154i[FDD  ] read() on floppy image returns 0
+00020020347i[FDD  ] read() on floppy image returns 0
+00020066559i[FDD  ] read() on floppy image returns 0
+00020112771i[FDD  ] read() on floppy image returns 0
+00020158983i[FDD  ] read() on floppy image returns 0
+00020205195i[FDD  ] read() on floppy image returns 0
+00020251388i[FDD  ] read() on floppy image returns 0
+00020297600i[FDD  ] read() on floppy image returns 0
+00020343812i[FDD  ] read() on floppy image returns 0
+00020390024i[FDD  ] read() on floppy image returns 0
+00020436236i[FDD  ] read() on floppy image returns 0
+00020482429i[FDD  ] read() on floppy image returns 0
+00020528641i[FDD  ] read() on floppy image returns 0
+00020574853i[FDD  ] read() on floppy image returns 0
+00020621065i[FDD  ] read() on floppy image returns 0
+00020667258i[FDD  ] read() on floppy image returns 0
+00021680441e[CPU0 ] check_cs(0x0061): not a valid code segment !
+00021829194i[CPU0 ] WARNING: HLT instruction with IF=0!
+03151000000i[     ] Ctrl-C detected in signal handler.
+03151000005i[     ] Ctrl-C detected in signal handler.
+03246800000i[     ] Ctrl-C detected in signal handler.
+03246800005i[     ] dbg: Quit
+03246800005i[CPU0 ] CPU is in protected mode (halted)
+03246800005i[CPU0 ] CS.d_b = 32 bit
+03246800005i[CPU0 ] SS.d_b = 32 bit
+03246800005i[CPU0 ] | EAX=0000002c  EBX=00000017  ECX=00000000  EDX=000003d5
+03246800005i[CPU0 ] | ESP=004b5f4c  EBP=00007cfa  ESI=00000fa0  EDI=00000f00
+03246800005i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf AF PF cf
+03246800005i[CPU0 ] | SEG selector     base    limit G D
+03246800005i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+03246800005i[CPU0 ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+03246800005i[CPU0 ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+03246800005i[CPU0 ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+03246800005i[CPU0 ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+03246800005i[CPU0 ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+03246800005i[CPU0 ] |  GS:0018( 0003| 0|  0) 000b8000 0fffffff 1 1
+03246800005i[CPU0 ] | EIP=0010209a (0010209a)
+03246800005i[CPU0 ] | CR0=0xe0000019 CR2=0x00001fd4
+03246800005i[CPU0 ] | CR3=0x00417000 CR4=0x00000000
+03246800005i[CMOS ] Last time is 1316594729 (Wed Sep 21 16:45:29 2011)
+03246800005i[XGUI ] Exit
+03246800005i[CTRL ] quit_sim called with exit code 0

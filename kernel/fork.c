@@ -109,6 +109,7 @@ int do_fork(unsigned int esp)
 
 	list_add_tail(&(tsk->list), &task_list_head);
 
+/*
 	printk("cs: 0x%x, eip: 0x%x, ds: 0x%x, eax: 0x%x, ebx: 0x%x\n"
 		"ecx: 0x%x, es: 0x%x, fs: 0x%x, eflags: 0x%x\n"
 		"ss: 0x%x, esp: 0x%x\n",
@@ -116,7 +117,7 @@ int do_fork(unsigned int esp)
 		tsk->tss.ecx, tsk->tss.es, tsk->tss.fs, tsk->tss.eflags, 
 		tsk->tss.ss, tsk->tss.esp);
 	printk("cs: 0x%x, ds: 0x%x\n", tsk->tss.cs, tsk->tss.ds);
-
+*/
 	return pid;
 }
 

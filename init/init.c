@@ -1,7 +1,7 @@
 /*
  * init.c - kernel init functions.
  *
- * (c) 2011	wzt http://wwww.cloud-sec.org
+ * (c) 2011	wzt
  *
  */
 
@@ -18,6 +18,8 @@ static inline _syscall0(int, pause)
 static inline _syscall1(int, write_s, char*, msg)
 static inline _syscall1(int, write_i, int, msg)
 static inline _syscall1(int, creat_task, unsigned int, eip)
+
+extern char init_user_stack[PAGE_SIZE];
 
 void run_init_task(void)
 {
@@ -72,7 +74,7 @@ void run_task2(void)
 void run_task3(void)
 {
 	for (;;)
-		printk("D");
+		printk("E");
 }
 
 void init(void)
@@ -105,23 +107,36 @@ void kernel_start(void)
 	//hd_test();
 
 	//creat_kthread((unsigned int)&run_task3);
-	printk("Move to ring3.\n");
+	printk("Start idle task.\n");
 
 	//timer_test();
-	/* start move to ring3 mode. */
 	sti();
 	MOVE_TO_RING3()
-	//creat_task((unsigned int)&run_task1);
+/*
+	asm("movl $init_user_stack, %%eax\n\t"     \
+		"pushl $0x17\n\t"       \
+		"pushl %%eax\n\t"       \
+		"pushfl\n\t"            \
+		"pushl $0x0f\n\t"       \
+		"pushl $1f\n\t"         \
+		"iret\n\t"              \
+		"1:\n\t"                \
+		"movw $0x17, %%ax\n\t"  \
+		"movw %%ax, %%ds\n\t"   \
+		"movw %%ax, %%es\n\t"   \
+		"movw %%ax, %%fs\n\t"   \
+		"movw %%ax, %%gs\n"     \
+		::);
+*/
 	//creat_task((unsigned int)&run_task2);
 
-/*
 	if (!fork()) {
 		//init();
-		write_s("I'm child task.\n");
+		//write_s("I'm child task.\n");
 	}
-*/
+
 	for (;;) {
 		//write_s("I'm idle task.\n");
-		pause();
+		//pause();
 	}
 }

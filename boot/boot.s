@@ -24,7 +24,7 @@ _start:
 	orb %ah, %ah
 	jnz failed
 
-        movw $0x1000, %ax
+        movw $0x1000, %ax	# load kernel to 0x10000:0x0(64kb).
         movw %ax, %es
         xorw %bx, %bx   	# es:bs destination address
         movw $81, %cx		# 80 sectors is enough.
@@ -34,18 +34,6 @@ rd_kern:
         addw $512, %bx
         incw %si
         loop rd_kern
-
-	cli			# close interrupt.
-
-	movw $0x1000, %ax	# move first 512 bytes of kernel from 0x10000:0x0 to 0x0:0x0.
- 	movw %ax, %ds		
-	xorw %ax, %ax
-	movw %ax, %es
-	xorw %di, %di
-	xorw %si, %si
-	movw $0x128, %cx	# 512 bytes.	
-	cld
-	rep movsl
 
         xorw %ax, %ax		# clear registers. ds,es has been changed before.
         movw %ax, %ds
@@ -59,13 +47,14 @@ enable_a20:			# enable a20.
 	movb $0xdf, %al
 	outb %al, $0x64
 
+	cli			# close interrupt.
 	lgdt gdt_48		# load gdtr.
 
 	movl %cr0, %eax		# enter protect mode.
 	orl $0x1, %eax
 	movl %eax, %cr0
 
-	ljmp $0x08, $0x0	# jmp to startup_32
+	ljmp $0x08, $start_pm
 
 failed:
 	movw $boot_failed, %ax	# msg addr at es:bp.
@@ -109,11 +98,28 @@ rp_read:
         popw %ax
         ret
 
+.code32
+start_pm:
+	movl $0x10, %eax
+	mov %ax, %ds
+	mov %ax, %es
+	mov %ax, %gs
+	mov %ax, %ss
+	movl $0x2000, %esp		# set kernel stack 8KB.
+
+	cld				# move kernel from 0x10000(1KB) to 0x100000(1MB).
+	movl $0x10000, %esi
+	movl $0x100000, %edi
+	movl $0x10000, %ecx
+	rep movsb
+
+	ljmp $0x08, $0x100000	 	# jmp to startup_32
+
 gdt:
-	.quad 0x0000000000000000 # null descriptor
-	.quad 0x00cf9a000000ffff # cs
-	.quad 0x00cf92000000ffff # ds
-	.quad 0x0000000000000000 # reserved for further use
+	.quad 0x0000000000000000	# null descriptor
+	.quad 0x00cf9a000000ffff	# cs
+	.quad 0x00cf92000000ffff	# ds
+	.quad 0x0000000000000000	# reserved for further use
 
 gdt_48:
 	.word 32

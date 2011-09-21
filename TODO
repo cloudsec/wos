@@ -1,4 +1,4 @@
-a. rewrite bootloader.
+a. rewrite bootloader.				[done]
 b. Compute real memory size.
 c. Desgin copy_page_tables().			[done]
 d. COW support.					[writing]

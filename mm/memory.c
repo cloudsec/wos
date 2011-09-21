@@ -14,21 +14,21 @@
 
 extern void page_fault();
 
-/* set kernel page dectory at 0x100000(1MB). */
-pde_t pg_dir = 0x300000;
+/* set kernel page dectory at 0x200000(2MB). */
+pde_t pg_dir = 0x200000;
 
 void setup_kernel_pte(void)
 {
-        pde_t *kernel_pde = (pde_t *)0x300000;
-        pte_t *kernel_pte = (pte_t *)0x301000;
-        pte_t pte_addr = 0x101000, py_addr = 0;
+        pde_t *kernel_pde = (pde_t *)0x200000;
+        pte_t *kernel_pte = (pte_t *)0x201000;
+        pte_t pte_addr = 0x201000, py_addr = 0;
 	unsigned int pde_idx, pte_idx;
 	
 	/* mmap kernel to all the 64MB memory. */
 	for (pde_idx = 0; pde_idx < KERNEL_PDE_NUM; pde_idx++) {
 		*(kernel_pde + pde_idx) = pte_addr | PAGE_USER_MODE;
 		kernel_pte = (pte_t *)pte_addr;
-		DbgPrint("0x%x, 0x%x\n", *(kernel_pde + pde_idx), kernel_pte);
+		//printk("0x%x, 0x%x\n", *(kernel_pde + pde_idx), kernel_pte);
 		for (pte_idx = 0; pte_idx < PAGE_PTE_NUM; pte_idx++) {
 			*(kernel_pte + pte_idx) = py_addr | PAGE_USER_MODE;
 			py_addr += PAGE_SIZE;
@@ -43,22 +43,13 @@ void setup_kernel_pte(void)
 		"orl $0x80000000, %%eax\n\t"
 		"movl %%eax, %%cr0\n"::"a"(pg_dir));
 	printk("Init kernel pte ok.\n");
-
-/*
-	for (pde_idx = 0; pde_idx < KERNEL_PDE_NUM; pde_idx++)
-		printk("0x%x, 0x%x\n", pde_idx, *(kernel_pde + pde_idx));
-
-	kernel_pte = (pte_t *)0x101000;
-	for (pte_idx = 0; pte_idx < 16; pte_idx++)
-		printk("0x%x, 0x%x\n", kernel_pte + pte_idx, *(kernel_pte + pte_idx));
-*/
 }
 
 void setup_kernel_pte_new(void)
 {
-	pde_t *kernel_pde = (pde_t *)0x100000;
-	pte_t *kernel_pte = (pte_t *)0x101000;
-	pte_t pte_addr = 0x101000, py_addr = 0;
+	pde_t *kernel_pde = (pde_t *)0x200000;
+	pte_t *kernel_pte = (pte_t *)0x201000;
+	pte_t pte_addr = 0x201000, py_addr = 0;
 	int pde_idx, pte_idx;
 
 	/* mmap kernel to all the 64MB memory. */

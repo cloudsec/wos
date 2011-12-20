@@ -66,7 +66,7 @@ int do_fork(unsigned int esp)
 
 	*tsk = *current;
 	tsk->tss.prev_task_link = 0;
-	tsk->tss.esp0 = tsk + PAGE_SIZE;
+	tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE - 4;
 	tsk->tss.ss0 = KERNEL_DATA_SEL;
 	tsk->tss.esp1 = 0;
 	tsk->tss.ss1 = 0;
@@ -116,8 +116,9 @@ int do_fork(unsigned int esp)
 		tsk->tss.cs, tsk->tss.eip, tsk->tss.ds, tsk->tss.eax, tsk->tss.ebx, 
 		tsk->tss.ecx, tsk->tss.es, tsk->tss.fs, tsk->tss.eflags, 
 		tsk->tss.ss, tsk->tss.esp);
-	printk("cs: 0x%x, ds: 0x%x\n", tsk->tss.cs, tsk->tss.ds);
 */
+	printk("task esp0: 0x%x, esp: 0x%x\n", tsk->tss.esp0, tsk->tss.esp);
+
 	return pid;
 }
 
@@ -142,7 +143,7 @@ int sys_creat_task(unsigned int eip)
 
 	*tsk = *current;
         tsk->tss.prev_task_link = 0;
-        tsk->tss.esp0 = tsk + PAGE_SIZE;
+        tsk->tss.esp0 = (unsigned int)tsk + PAGE_SIZE;
         tsk->tss.ss0 = KERNEL_DATA_SEL;
         tsk->tss.esp1 = 0;
         tsk->tss.ss1 = 0;
@@ -154,7 +155,7 @@ int sys_creat_task(unsigned int eip)
         tsk->tss.ebx = 0;
         tsk->tss.ecx = 0;
         tsk->tss.edx = 0;
-        tsk->tss.esp = alloc_page(0) + PAGE_SIZE;
+        tsk->tss.esp = (unsigned int)alloc_page(0) + PAGE_SIZE;
 	DbgPrint("Alloc tsk ring3 stack at 0x%x\n", tsk->tss.esp - PAGE_SIZE);
         tsk->tss.ebp = 0;
         tsk->tss.esi = 0;

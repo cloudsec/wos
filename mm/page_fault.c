@@ -59,14 +59,24 @@ void do_page_fault(unsigned int esp)
 {
 	struct regs *reg = (struct regs *)esp;
         unsigned int error_code, cr2;
+	unsigned int esp0, ss, cs;
+
+	asm("movl %%esp, %%eax\n":"=a"(esp0));
+	printk("esp0: 0x%x\n", esp0);
+	asm("movl %%ss, %%eax\n":"=a"(ss));
+	printk("ss: 0x%x\n", ss);
+	asm("movl %%cs, %%eax\n":"=a"(cs));
+	printk("cs: 0x%x\n", cs);
 
         asm("movl %%cr2, %%eax\n":"=a"(cr2));
-        printk("page fault at virtual addr: 0x%x\n", cr2);
+        printk("pid: %d page fault at virtual addr: 0x%x\n", current->pid, cr2);
 
 	error_code = reg->error_code;
-	printk("error code: 0x%x, eip: 0x%x, esp: 0x%x\n", 
-		error_code, reg->orig_eip, reg->esp);
-
+	printk("error code: 0x%x, eip: 0x%x, esp: 0x%x\n" 
+		"cs: 0x%x, ds: 0x%x, es: 0x%x, ss: 0x%x\n",
+		error_code, reg->orig_eip, reg->esp,
+		reg->orig_cs, reg->ds, reg->es, reg->ss);
+/*
 	if (error_code & PF_WRITE) {
 		printk("pid: %d write access error.\n", current->pid);	
 		if (!do_page_cow(cr2, reg)) {
@@ -76,4 +86,5 @@ void do_page_fault(unsigned int esp)
 	}
 pf_err:
 	panic("Page fault", esp);
+*/
 }

@@ -39,17 +39,6 @@
 #define USER_CODE_SEL			0x0f	/*  1111 */
 #define USER_DATA_SEL			0x17	/*  1111 */
 
-#define IDT_SYSTEM_TYPE                 0xef00
-#define IDT_INTR_TYPE                   0x8e00
-#define IDT_TRAP_TYPE                   0x8f00
-
-#define set_intr_gate(base, idx)        set_idt_desc(base, KERNEL_CODE_SEL,     \
-                                                IDT_INTR_TYPE, idx)
-#define set_trap_gate(base, idx)        set_idt_desc(base, KERNEL_CODE_SEL,     \
-                                                IDT_TRAP_TYPE, idx)
-#define set_system_gate(base, idx)      set_idt_desc(base, KERNEL_CODE_SEL,     \
-                                                IDT_SYSTEM_TYPE, idx)
-
 struct gdt_desc {
         unsigned int a;
         unsigned int b;

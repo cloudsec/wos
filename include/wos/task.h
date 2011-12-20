@@ -81,7 +81,7 @@ struct regs {
 
 #define MAX_PID			1024
 
-#define MOVE_TO_RING3()		asm("movl %%esp, %%eax\n\t"	\
+#define move_to_user_mode()	asm("movl %%esp, %%eax\n\t"	\
 					"pushl $0x17\n\t"	\
 					"pushl %%eax\n\t"	\
 					"pushfl\n\t"		\
@@ -94,7 +94,7 @@ struct regs {
 					"movw %%ax, %%es\n\t"	\
 					"movw %%ax, %%fs\n\t"	\
 					"movw %%ax, %%gs\n"	\
-					::);
+					::)
 
 struct list_head task_list_head;
 struct task_struct *current;

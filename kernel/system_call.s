@@ -6,7 +6,7 @@
 .globl system_call, ret_from_sys_call
 .align 2
 
-nr_system_calls 	= 7
+nr_system_calls 	= 8
 state_offset 		= 140
 counter_offset 		= 144
 
@@ -87,6 +87,10 @@ sys_fork:
 	addl $4, %esp
 	ret
 
+sys_exit:
+	call do_exit
+	ret
+
 sys_call_table:
 	.long sys_write_s
 	.long sys_fork
@@ -94,6 +98,7 @@ sys_call_table:
 	.long sys_creat_task
 	.long sys_getpid
 	.long sys_write_i
+	.long sys_exit
 	.long 0
 
 test_msg:

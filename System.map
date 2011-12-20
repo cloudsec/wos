@@ -25,6 +25,7 @@ Linker script and memory map
 
 LOAD boot/load.o
 LOAD init/init.o
+LOAD init/version.o
 LOAD kernel/gdt.o
 LOAD kernel/trap_asm.o
 LOAD kernel/traps.o
@@ -33,9 +34,11 @@ LOAD kernel/sched.o
 LOAD kernel/system_call.o
 LOAD kernel/kthread.o
 LOAD kernel/fork.o
+LOAD kernel/exit.o
 LOAD kernel/sys.o
 LOAD kernel/panic.o
 LOAD mm/memory.o
+LOAD mm/pfault.o
 LOAD mm/slab.o
 LOAD mm/buddy.o
 LOAD mm/page_fault.o
@@ -50,403 +53,461 @@ LOAD lib/string.o
                 0x0000000000100000                . = (LOAD_OFFSET + 0x100000)
                 0x0000000000100000                _text = .
 
-.text           0x0000000000100000     0x53f2
+.text           0x0000000000100000     0x566e
  *(.text)
- .text          0x0000000000100000       0x50 boot/load.o
+ .text          0x0000000000100000       0x43 boot/load.o
                 0x0000000000100000                startup_32
- .text          0x0000000000100050      0x17e init/init.o
-                0x00000000001000b0                run_init_task
-                0x0000000000100106                run_task1
-                0x000000000010012e                run_task2
-                0x000000000010013f                run_task3
-                0x0000000000100150                init
-                0x0000000000100178                kernel_start
- *fill*         0x00000000001001ce        0x2 9090
- .text          0x00000000001001d0      0x274 kernel/gdt.o
-                0x00000000001001d0                __set_gdt_desc
-                0x000000000010024c                set_gdt_desc
-                0x0000000000100287                set_ldt_desc
-                0x00000000001002c2                set_tss_desc
-                0x00000000001002fd                setup_gdt
-                0x0000000000100388                print_init_ldt_list
-                0x00000000001003e9                print_gdt_list
- .text          0x0000000000100444      0x3d7 kernel/trap_asm.o
-                0x0000000000100444                divide_error
-                0x0000000000100474                debug
-                0x00000000001004a4                nmi
-                0x00000000001004d4                int3
-                0x0000000000100504                overflow
-                0x0000000000100534                bounds
-                0x0000000000100564                invalid_op
-                0x0000000000100594                coprocessor_segment_overrun
-                0x00000000001005c4                reserved
-                0x00000000001005f4                irq13
-                0x0000000000100624                device_not_available
-                0x0000000000100654                timer_interrupt
-                0x0000000000100688                keyboard_interrupt
-                0x00000000001006ae                hd_interrupt
-                0x00000000001006dc                parallel_interrupt
-                0x00000000001006e4                double_fault
-                0x000000000010070e                invalid_TSS
-                0x0000000000100738                segment_not_present
-                0x0000000000100762                stack_segment
-                0x000000000010078c                general_protection
-                0x00000000001007b6                page_fault
-                0x00000000001007e2                default_int
- *fill*         0x000000000010081b        0x1 9090
- .text          0x000000000010081c      0x576 kernel/traps.o
-                0x000000000010081c                set_idt_desc
-                0x0000000000100853                setup_idt
-                0x0000000000100898                do_divide_error
-                0x00000000001008b3                do_debug
-                0x00000000001008ce                do_nmi
-                0x00000000001008e9                do_int3
-                0x0000000000100904                do_overflow
-                0x000000000010091f                do_bounds
-                0x000000000010093a                do_invalid_op
-                0x0000000000100955                do_coprocessor_segment_overrun
-                0x0000000000100970                do_reserved
-                0x000000000010098b                do_irq13
-                0x00000000001009a6                do_double_fault
-                0x00000000001009c1                do_invalid_tss
-                0x00000000001009dc                do_segment_not_present
-                0x00000000001009f7                do_stack_segment
-                0x0000000000100a12                do_general_protection
-                0x0000000000100a2d                do_device_not_available
-                0x0000000000100a48                init_trap
-                0x0000000000100ce2                io_delay
-                0x0000000000100cf1                init_8259A
- *fill*         0x0000000000100d92        0x2 9090
- .text          0x0000000000100d94      0x2e2 kernel/timer.o
-                0x0000000000100de3                add_timer
-                0x0000000000100e68                del_timer
-                0x0000000000100ec5                do_timer
-                0x0000000000100f80                init_timer
-                0x0000000000100ffa                __timer_test
-                0x000000000010100d                __timer_test1
-                0x0000000000101020                __timer_test2
-                0x0000000000101033                timer_test
- *fill*         0x0000000000101076        0x2 9090
- .text          0x0000000000101078      0x454 kernel/sched.o
-                0x0000000000101078                show_task_status
-                0x0000000000101103                schedule
-                0x0000000000101220                setup_init_task
-                0x0000000000101419                init_schedule
-                0x00000000001014a6                sys_getpid
-                0x00000000001014b2                sys_pause
- .text          0x00000000001014cc       0xa7 kernel/system_call.o
-                0x00000000001014d6                system_call
-                0x000000000010151a                ret_from_sys_call
- *fill*         0x0000000000101573        0x1 9090
- .text          0x0000000000101574      0x33c kernel/kthread.o
-                0x00000000001015a3                creat_kthread
- .text          0x00000000001018b0      0x691 kernel/fork.o
-                0x00000000001018df                get_pid
-                0x0000000000101913                do_fork
-                0x0000000000101c42                sys_creat_task
- *fill*         0x0000000000101f41        0x3 9090
- .text          0x0000000000101f44       0x5c kernel/sys.o
-                0x0000000000101f44                sys_write_s
-                0x0000000000101f5f                sys_write_i
-                0x0000000000101f7a                sys_printf
- .text          0x0000000000101fa0      0x11c kernel/panic.o
-                0x0000000000101fa0                panic
-                0x000000000010209f                oops
- .text          0x00000000001020bc      0x483 mm/memory.o
-                0x00000000001020bc                setup_kernel_pte
-                0x0000000000102171                setup_kernel_pte_new
-                0x0000000000102232                setup_task_pages
-                0x000000000010231a                copy_page_tables
-                0x00000000001024b2                init_mm
- *fill*         0x000000000010253f        0x1 9090
- .text          0x0000000000102540      0xf3d mm/slab.o
-                0x0000000000102581                __show_slab_list
-                0x00000000001025fb                show_slab_list
-                0x00000000001026a7                slab_bufctl
-                0x00000000001026af                get_slab_obj
-                0x000000000010271e                set_slab_obj_cache
-                0x0000000000102783                check_slab_size
-                0x00000000001027bc                expand_slab
-                0x0000000000102829                kmalloc
-                0x0000000000102970                addr_to_cache_idx
-                0x00000000001029ba                search_slab
-                0x0000000000102a24                put_slab_obj
-                0x0000000000102ade                kfree
-                0x0000000000102b67                compute_slab_obj_num
-                0x0000000000102b87                compute_slab_color_num
-                0x0000000000102b9f                get_slab_color
-                0x0000000000102bcc                set_slab_base_addr
-                0x0000000000102be3                fix_slab_base_addr
-                0x0000000000102bef                __init_slab
-                0x0000000000102d2b                init_slab
-                0x0000000000102d93                init_general_slab_cache
-                0x0000000000102edf                kmem_cache_alloc
-                0x0000000000102fd3                creat_kmem_cache
-                0x00000000001030ca                search_slab_cache
-                0x0000000000103139                kmem_cache_free
-                0x00000000001031bc                kmem_cache_destory
-                0x00000000001031f3                print_kmem_cache_list
-                0x00000000001032a3                init_kmem_cache
-                0x000000000010335e                mm_test
- *fill*         0x000000000010347d        0x3 9090
- .text          0x0000000000103480      0x75c mm/buddy.o
-                0x0000000000103480                check_buddy_size
-                0x00000000001034b9                alloc_buddy_chunk
-                0x000000000010356e                __alloc_page
-                0x0000000000103735                alloc_page
-                0x00000000001037c1                free_page
-                0x00000000001038da                __show_buddy_list
-                0x0000000000103976                show_buddy_list
-                0x000000000010399f                init_buddy_list
-                0x0000000000103aec                compute_buddy_num
-                0x0000000000103b4e                init_buddy_memory
-                0x0000000000103b9e                init_buddy
- .text          0x0000000000103bdc      0x21c mm/page_fault.o
-                0x0000000000103bdc                copy_page
-                0x0000000000103bf5                do_page_cow
-                0x0000000000103d35                do_page_fault
- .text          0x0000000000103df8       0x33 fs/fs.o
-                0x0000000000103df8                init_fs
- *fill*         0x0000000000103e2b        0x1 9090
- .text          0x0000000000103e2c      0x5e4 drivers/keyboard.o
-                0x0000000000103e2c                handle_esc
-                0x0000000000103e47                handle_backspace
-                0x0000000000103eb5                handle_tab
-                0x0000000000103f2a                handle_enter
-                0x0000000000103f80                handle_ctrl_l
-                0x0000000000103f8e                handle_shift_l
-                0x0000000000103f9c                handle_shift_r
-                0x0000000000103faa                handle_alt_l
-                0x0000000000103fb8                handle_caps_lock
-                0x0000000000103fd3                handle_F_1_10
-                0x0000000000103fe1                handle_num_lock
-                0x0000000000103fef                handle_scroll_lock
-                0x0000000000103ffd                handle_home
-                0x000000000010400b                handle_up
-                0x0000000000104047                handle_pageup
-                0x0000000000104062                handle_minus
-                0x0000000000104070                handle_left
-                0x00000000001040ac                handle_mid
-                0x00000000001040ba                handle_right
-                0x00000000001040f7                handle_plus
-                0x0000000000104105                handle_end
-                0x0000000000104113                handle_down
-                0x0000000000104150                handle_pagedown
-                0x000000000010416b                handle_ins
-                0x0000000000104179                handle_dot
-                0x0000000000104187                handle_f1
-                0x00000000001041a2                handle_f2
-                0x00000000001041b0                handle_f3
-                0x00000000001041be                handle_f4
-                0x00000000001041cc                handle_f5
-                0x00000000001041da                handle_f6
-                0x00000000001041e8                handle_f7
-                0x00000000001041f6                handle_f8
-                0x0000000000104204                handle_f9
-                0x0000000000104212                handle_f10
-                0x0000000000104220                handle_f11
-                0x000000000010422e                handle_f12
-                0x000000000010423c                handle_print
-                0x0000000000104294                handle_shift
-                0x00000000001042c2                do_keyboard
-                0x00000000001043c0                init_keyboard
- .text          0x0000000000104410      0x423 drivers/hd.o
-                0x0000000000104410                hd_ready_status
-                0x0000000000104461                hd_transfer_status
-                0x00000000001044b2                hd_read
-                0x00000000001045ae                hd_write
-                0x00000000001046aa                hd_test
-                0x0000000000104715                setup_dpt
-                0x0000000000104794                do_hd
-                0x00000000001047ac                init_hd
- *fill*         0x0000000000104833        0x1 9090
- .text          0x0000000000104834      0x4b0 lib/printk.o
-                0x0000000000104834                vfprintf
-                0x0000000000104cbe                printk
- .text          0x0000000000104ce4      0x32c drivers/vga.o
-                0x0000000000104ce4                __put_c
-                0x0000000000104d05                put_c
-                0x0000000000104e9f                put_s
-                0x0000000000104edc                set_cursor
-                0x0000000000104f30                __screen_roll
-                0x0000000000104f58                screen_roll
-                0x0000000000104fc4                screen_clear
-                0x0000000000104ffb                init_vga
- .text          0x0000000000105010       0x47 kernel/spinlock.o
-                0x0000000000105010                __local_irq_enable
-                0x0000000000105012                __local_irq_disable
-                0x0000000000105014                __local_irq_save
-                0x0000000000105024                __local_irq_restore
-                0x000000000010502a                init_spin_lock
-                0x0000000000105035                __spin_lock
-                0x000000000010504d                __spin_unlock
- *fill*         0x0000000000105057        0x1 9090
- .text          0x0000000000105058      0x39a lib/string.o
-                0x0000000000105058                itoa
-                0x0000000000105170                strlen
-                0x00000000001051b4                strcpy
-                0x00000000001051fa                strncpy
-                0x0000000000105257                strcmp
-                0x00000000001052d9                strncmp
-                0x0000000000105372                memcpy
-                0x00000000001053b9                memset
-                0x00000000001053f2                _etext = .
+ *fill*         0x0000000000100043        0x1 9090
+ .text          0x0000000000100044      0x21e init/init.o
+                0x0000000000100190                run_task1
+                0x00000000001001a1                run_task2
+                0x00000000001001b2                run_task3
+                0x00000000001001c3                init
+                0x00000000001001eb                kernel_start
+ *fill*         0x0000000000100262        0x2 9090
+ .text          0x0000000000100264       0x1b init/version.o
+                0x0000000000100264                wos_version
+ *fill*         0x000000000010027f        0x1 9090
+ .text          0x0000000000100280      0x274 kernel/gdt.o
+                0x0000000000100280                __set_gdt_desc
+                0x00000000001002fc                set_gdt_desc
+                0x0000000000100337                set_ldt_desc
+                0x0000000000100372                set_tss_desc
+                0x00000000001003ad                setup_gdt
+                0x0000000000100438                print_init_ldt_list
+                0x0000000000100499                print_gdt_list
+ .text          0x00000000001004f4      0x3ab kernel/trap_asm.o
+                0x00000000001004f4                divide_error
+                0x0000000000100524                debug
+                0x0000000000100554                nmi
+                0x0000000000100584                int3
+                0x00000000001005b4                overflow
+                0x00000000001005e4                bounds
+                0x0000000000100614                invalid_op
+                0x0000000000100644                coprocessor_segment_overrun
+                0x0000000000100674                reserved
+                0x00000000001006a4                irq13
+                0x00000000001006d4                device_not_available
+                0x0000000000100704                timer_interrupt
+                0x0000000000100738                keyboard_interrupt
+                0x000000000010075e                hd_interrupt
+                0x000000000010078c                parallel_interrupt
+                0x0000000000100794                double_fault
+                0x00000000001007be                invalid_TSS
+                0x00000000001007e8                segment_not_present
+                0x0000000000100812                stack_segment
+                0x000000000010083c                general_protection
+                0x0000000000100866                default_int
+ *fill*         0x000000000010089f        0x1 9090
+ .text          0x00000000001008a0      0x576 kernel/traps.o
+                0x00000000001008a0                set_idt_desc
+                0x00000000001008d7                setup_idt
+                0x000000000010091c                do_divide_error
+                0x0000000000100937                do_debug
+                0x0000000000100952                do_nmi
+                0x000000000010096d                do_int3
+                0x0000000000100988                do_overflow
+                0x00000000001009a3                do_bounds
+                0x00000000001009be                do_invalid_op
+                0x00000000001009d9                do_coprocessor_segment_overrun
+                0x00000000001009f4                do_reserved
+                0x0000000000100a0f                do_irq13
+                0x0000000000100a2a                do_double_fault
+                0x0000000000100a45                do_invalid_tss
+                0x0000000000100a60                do_segment_not_present
+                0x0000000000100a7b                do_stack_segment
+                0x0000000000100a96                do_general_protection
+                0x0000000000100ab1                do_device_not_available
+                0x0000000000100acc                init_trap
+                0x0000000000100d66                io_delay
+                0x0000000000100d75                init_8259A
+ *fill*         0x0000000000100e16        0x2 9090
+ .text          0x0000000000100e18      0x2e2 kernel/timer.o
+                0x0000000000100e67                add_timer
+                0x0000000000100eec                del_timer
+                0x0000000000100f49                do_timer
+                0x0000000000101004                init_timer
+                0x000000000010107e                __timer_test
+                0x0000000000101091                __timer_test1
+                0x00000000001010a4                __timer_test2
+                0x00000000001010b7                timer_test
+ *fill*         0x00000000001010fa        0x2 9090
+ .text          0x00000000001010fc      0x454 kernel/sched.o
+                0x00000000001010fc                show_task_status
+                0x0000000000101187                schedule
+                0x00000000001012a4                setup_init_task
+                0x000000000010149d                init_schedule
+                0x000000000010152a                sys_getpid
+                0x0000000000101536                sys_pause
+ .text          0x0000000000101550       0xb1 kernel/system_call.o
+                0x000000000010155a                system_call
+                0x000000000010159e                ret_from_sys_call
+ *fill*         0x0000000000101601        0x3 9090
+ .text          0x0000000000101604      0x33c kernel/kthread.o
+                0x0000000000101633                creat_kthread
+ .text          0x0000000000101940      0x6b0 kernel/fork.o
+                0x000000000010196f                get_pid
+                0x00000000001019a3                do_fork
+                0x0000000000101cf3                sys_creat_task
+ .text          0x0000000000101ff0       0xe5 kernel/exit.o
+                0x0000000000102010                do_exit
+ *fill*         0x00000000001020d5        0x3 9090
+ .text          0x00000000001020d8       0x59 kernel/sys.o
+                0x00000000001020d8                sys_write_s
+                0x00000000001020f3                sys_write_i
+                0x000000000010210e                sys_printf
+ *fill*         0x0000000000102131        0x3 9090
+ .text          0x0000000000102134      0x143 kernel/panic.o
+                0x0000000000102134                panic
+                0x000000000010225a                oops
+ *fill*         0x0000000000102277        0x1 9090
+ .text          0x0000000000102278      0x486 mm/memory.o
+                0x0000000000102278                setup_kernel_pte
+                0x000000000010232d                setup_kernel_pte_new
+                0x00000000001023ee                setup_task_pages
+                0x00000000001024d6                copy_page_tables
+                0x0000000000102671                init_mm
+ *fill*         0x00000000001026fe        0x2 9090
+ .text          0x0000000000102700       0x2c mm/pfault.o
+                0x0000000000102700                page_fault
+ .text          0x000000000010272c      0xf3e mm/slab.o
+                0x000000000010276d                __show_slab_list
+                0x00000000001027e7                show_slab_list
+                0x0000000000102893                slab_bufctl
+                0x000000000010289b                get_slab_obj
+                0x0000000000102909                set_slab_obj_cache
+                0x000000000010296e                check_slab_size
+                0x00000000001029a7                expand_slab
+                0x0000000000102a14                kmalloc
+                0x0000000000102b5b                addr_to_cache_idx
+                0x0000000000102ba5                search_slab
+                0x0000000000102c0f                put_slab_obj
+                0x0000000000102cc8                kfree
+                0x0000000000102d4e                compute_slab_obj_num
+                0x0000000000102d6e                compute_slab_color_num
+                0x0000000000102d86                get_slab_color
+                0x0000000000102db3                set_slab_base_addr
+                0x0000000000102dca                fix_slab_base_addr
+                0x0000000000102dd5                __init_slab
+                0x0000000000102f10                init_slab
+                0x0000000000102f78                init_general_slab_cache
+                0x00000000001030c4                kmem_cache_alloc
+                0x00000000001031b8                creat_kmem_cache
+                0x00000000001032af                search_slab_cache
+                0x000000000010331e                kmem_cache_free
+                0x000000000010339e                kmem_cache_destory
+                0x00000000001033d5                print_kmem_cache_list
+                0x0000000000103485                init_kmem_cache
+                0x000000000010354b                mm_test
+ *fill*         0x000000000010366a        0x2 9090
+ .text          0x000000000010366c      0x75c mm/buddy.o
+                0x000000000010366c                check_buddy_size
+                0x00000000001036a5                alloc_buddy_chunk
+                0x000000000010375a                __alloc_page
+                0x0000000000103921                alloc_page
+                0x00000000001039ad                free_page
+                0x0000000000103ac6                __show_buddy_list
+                0x0000000000103b62                show_buddy_list
+                0x0000000000103b8b                init_buddy_list
+                0x0000000000103cd8                compute_buddy_num
+                0x0000000000103d3a                init_buddy_memory
+                0x0000000000103d8a                init_buddy
+ .text          0x0000000000103dc8      0x24e mm/page_fault.o
+                0x0000000000103dc8                copy_page
+                0x0000000000103de1                do_page_cow
+                0x0000000000103f20                do_page_fault
+ *fill*         0x0000000000104016        0x2 9090
+ .text          0x0000000000104018       0x33 fs/fs.o
+                0x0000000000104018                init_fs
+ *fill*         0x000000000010404b        0x1 9090
+ .text          0x000000000010404c      0x5e4 drivers/keyboard.o
+                0x000000000010404c                handle_esc
+                0x0000000000104067                handle_backspace
+                0x00000000001040d5                handle_tab
+                0x000000000010414a                handle_enter
+                0x00000000001041a0                handle_ctrl_l
+                0x00000000001041ae                handle_shift_l
+                0x00000000001041bc                handle_shift_r
+                0x00000000001041ca                handle_alt_l
+                0x00000000001041d8                handle_caps_lock
+                0x00000000001041f3                handle_F_1_10
+                0x0000000000104201                handle_num_lock
+                0x000000000010420f                handle_scroll_lock
+                0x000000000010421d                handle_home
+                0x000000000010422b                handle_up
+                0x0000000000104267                handle_pageup
+                0x0000000000104282                handle_minus
+                0x0000000000104290                handle_left
+                0x00000000001042cc                handle_mid
+                0x00000000001042da                handle_right
+                0x0000000000104317                handle_plus
+                0x0000000000104325                handle_end
+                0x0000000000104333                handle_down
+                0x0000000000104370                handle_pagedown
+                0x000000000010438b                handle_ins
+                0x0000000000104399                handle_dot
+                0x00000000001043a7                handle_f1
+                0x00000000001043c2                handle_f2
+                0x00000000001043d0                handle_f3
+                0x00000000001043de                handle_f4
+                0x00000000001043ec                handle_f5
+                0x00000000001043fa                handle_f6
+                0x0000000000104408                handle_f7
+                0x0000000000104416                handle_f8
+                0x0000000000104424                handle_f9
+                0x0000000000104432                handle_f10
+                0x0000000000104440                handle_f11
+                0x000000000010444e                handle_f12
+                0x000000000010445c                handle_print
+                0x00000000001044b4                handle_shift
+                0x00000000001044e2                do_keyboard
+                0x00000000001045e0                init_keyboard
+ .text          0x0000000000104630      0x423 drivers/hd.o
+                0x0000000000104630                hd_ready_status
+                0x0000000000104681                hd_transfer_status
+                0x00000000001046d2                hd_read
+                0x00000000001047ce                hd_write
+                0x00000000001048ca                hd_test
+                0x0000000000104935                setup_dpt
+                0x00000000001049b4                do_hd
+                0x00000000001049cc                init_hd
+ *fill*         0x0000000000104a53        0x1 9090
+ .text          0x0000000000104a54      0x509 lib/printk.o
+                0x0000000000104a54                vfprintf
+                0x0000000000104f3a                printk
+ *fill*         0x0000000000104f5d        0x3 9090
+ .text          0x0000000000104f60      0x32c drivers/vga.o
+                0x0000000000104f60                __put_c
+                0x0000000000104f81                put_c
+                0x000000000010511b                put_s
+                0x0000000000105158                set_cursor
+                0x00000000001051ac                __screen_roll
+                0x00000000001051d4                screen_roll
+                0x0000000000105240                screen_clear
+                0x0000000000105277                init_vga
+ .text          0x000000000010528c       0x47 kernel/spinlock.o
+                0x000000000010528c                __local_irq_enable
+                0x000000000010528e                __local_irq_disable
+                0x0000000000105290                __local_irq_save
+                0x00000000001052a0                __local_irq_restore
+                0x00000000001052a6                init_spin_lock
+                0x00000000001052b1                __spin_lock
+                0x00000000001052c9                __spin_unlock
+ *fill*         0x00000000001052d3        0x1 9090
+ .text          0x00000000001052d4      0x39a lib/string.o
+                0x00000000001052d4                itoa
+                0x00000000001053ec                strlen
+                0x0000000000105430                strcpy
+                0x0000000000105476                strncpy
+                0x00000000001054d3                strcmp
+                0x0000000000105555                strncmp
+                0x00000000001055ee                memcpy
+                0x0000000000105635                memset
+                0x000000000010566e                _etext = .
 
-.iplt           0x00000000001053f4        0x0
+.iplt           0x0000000000105670        0x0
  .iplt          0x0000000000000000        0x0 boot/load.o
 
-.rodata         0x00000000001053f4      0x917
+.rodata         0x0000000000105670      0x9c7
  *(.rodata)
- .rodata        0x00000000001053f4       0x4f init/init.o
- .rodata        0x0000000000105443       0x35 kernel/gdt.o
- .rodata        0x0000000000105478       0xc2 kernel/traps.o
- *fill*         0x000000000010553a        0x2 00
- .rodata        0x000000000010553c       0x50 kernel/timer.o
- .rodata        0x000000000010558c       0x3a kernel/sched.o
- .rodata        0x00000000001055c6       0x4b kernel/kthread.o
- *fill*         0x0000000000105611        0x3 00
- .rodata        0x0000000000105614       0x4a kernel/fork.o
- .rodata        0x000000000010565e        0x8 kernel/sys.o
- *fill*         0x0000000000105666        0x2 00
- .rodata        0x0000000000105668      0x11d kernel/panic.o
- *fill*         0x0000000000105785        0x3 00
- .rodata        0x0000000000105788       0xc6 mm/memory.o
- *fill*         0x000000000010584e        0x2 00
- .rodata        0x0000000000105850      0x1fe mm/slab.o
- *fill*         0x0000000000105a4e        0x2 00
- .rodata        0x0000000000105a50       0xc8 mm/buddy.o
- .rodata        0x0000000000105b18      0x10b mm/page_fault.o
- *fill*         0x0000000000105c23        0x1 00
- .rodata        0x0000000000105c24       0x40 fs/fs.o
- .rodata        0x0000000000105c64       0x2f drivers/keyboard.o
- *fill*         0x0000000000105c93        0x1 00
- .rodata        0x0000000000105c94       0x77 drivers/hd.o
+ .rodata        0x0000000000105670       0x48 init/init.o
+ .rodata        0x00000000001056b8       0x1a init/version.o
+ .rodata        0x00000000001056d2       0x35 kernel/gdt.o
+ .rodata        0x0000000000105707       0xc2 kernel/traps.o
+ *fill*         0x00000000001057c9        0x3 00
+ .rodata        0x00000000001057cc       0x50 kernel/timer.o
+ .rodata        0x000000000010581c       0x3a kernel/sched.o
+ .rodata        0x0000000000105856       0x4b kernel/kthread.o
+ *fill*         0x00000000001058a1        0x3 00
+ .rodata        0x00000000001058a4       0x66 kernel/fork.o
+ *fill*         0x000000000010590a        0x2 00
+ .rodata        0x000000000010590c       0x6f kernel/exit.o
+ .rodata        0x000000000010597b        0x8 kernel/sys.o
+ *fill*         0x0000000000105983        0x1 00
+ .rodata        0x0000000000105984      0x132 kernel/panic.o
+ *fill*         0x0000000000105ab6        0x2 00
+ .rodata        0x0000000000105ab8       0xc6 mm/memory.o
+ *fill*         0x0000000000105b7e        0x2 00
+ .rodata        0x0000000000105b80      0x1f0 mm/slab.o
+ .rodata        0x0000000000105d70       0xc8 mm/buddy.o
+ .rodata        0x0000000000105e38      0x117 mm/page_fault.o
+ *fill*         0x0000000000105f4f        0x1 00
+ .rodata        0x0000000000105f50       0x40 fs/fs.o
+ .rodata        0x0000000000105f90       0x2f drivers/keyboard.o
+ *fill*         0x0000000000105fbf        0x1 00
+ .rodata        0x0000000000105fc0       0x77 drivers/hd.o
  *(.rodata.*)
 
-.rel.dyn        0x0000000000105d0c        0x0
+.eh_frame       0x0000000000106038      0xdf0
+ .eh_frame      0x0000000000106038      0x184 init/init.o
+ .eh_frame      0x00000000001061bc       0x18 init/version.o
+                                         0x30 (size before relaxing)
+ .eh_frame      0x00000000001061d4       0xa8 kernel/gdt.o
+                                         0xc0 (size before relaxing)
+ .eh_frame      0x000000000010627c      0x1f0 kernel/traps.o
+                                        0x208 (size before relaxing)
+ .eh_frame      0x000000000010646c       0xf4 kernel/timer.o
+                                        0x10c (size before relaxing)
+ .eh_frame      0x0000000000106560       0x9c kernel/sched.o
+                                         0xb4 (size before relaxing)
+ .eh_frame      0x00000000001065fc       0x30 kernel/kthread.o
+                                         0x48 (size before relaxing)
+ .eh_frame      0x000000000010662c       0x94 kernel/fork.o
+                                         0xac (size before relaxing)
+ .eh_frame      0x00000000001066c0       0x2c kernel/exit.o
+                                         0x44 (size before relaxing)
+ .eh_frame      0x00000000001066ec       0x48 kernel/sys.o
+                                         0x60 (size before relaxing)
+ .eh_frame      0x0000000000106734       0x44 kernel/panic.o
+                                         0x5c (size before relaxing)
+ .eh_frame      0x0000000000106778       0x7c mm/memory.o
+                                         0x94 (size before relaxing)
+ .eh_frame      0x00000000001067f4      0x2f4 mm/slab.o
+                                        0x30c (size before relaxing)
+ .eh_frame      0x0000000000106ae8      0x13c mm/buddy.o
+                                        0x154 (size before relaxing)
+ .eh_frame      0x0000000000106c24       0x74 mm/page_fault.o
+                                         0x8c (size before relaxing)
+ .eh_frame      0x0000000000106c98       0x3c lib/printk.o
+                                         0x54 (size before relaxing)
+ .eh_frame      0x0000000000106cd4       0x90 kernel/spinlock.o
+                                         0xa8 (size before relaxing)
+ .eh_frame      0x0000000000106d64       0xc4 lib/string.o
+                                         0xdc (size before relaxing)
+
+.rel.dyn        0x0000000000106e28        0x0
  .rel.iplt      0x0000000000000000        0x0 boot/load.o
  .rel.text      0x0000000000000000        0x0 boot/load.o
-                0x0000000000105d10                . = ALIGN (0x10)
+ .rel.data      0x0000000000000000        0x0 boot/load.o
+                0x0000000000106e30                . = ALIGN (0x10)
 
-.data           0x0000000000105d20      0x2ec
+.data           0x0000000000106e40      0x2ec
  *(.data)
- .data          0x0000000000105d20        0x0 boot/load.o
- .data          0x0000000000105d20        0x0 init/init.o
- .data          0x0000000000105d20        0x4 kernel/gdt.o
-                0x0000000000105d20                gdt_desc_idx
- .data          0x0000000000105d24        0x0 kernel/trap_asm.o
- .data          0x0000000000105d24        0x0 kernel/traps.o
- .data          0x0000000000105d24        0x0 kernel/timer.o
- .data          0x0000000000105d24        0x8 kernel/sched.o
-                0x0000000000105d24                stack_start
- .data          0x0000000000105d2c        0x0 kernel/system_call.o
- .data          0x0000000000105d2c        0x0 kernel/kthread.o
- .data          0x0000000000105d2c        0x0 kernel/fork.o
- .data          0x0000000000105d2c        0x0 kernel/sys.o
- .data          0x0000000000105d2c        0x0 kernel/panic.o
- .data          0x0000000000105d2c        0x4 mm/memory.o
-                0x0000000000105d2c                pg_dir
- *fill*         0x0000000000105d30       0x10 00
- .data          0x0000000000105d40       0x28 mm/slab.o
- *fill*         0x0000000000105d68       0x18 00
- .data          0x0000000000105d80       0x2c mm/buddy.o
-                0x0000000000105d80                buddy_size
- .data          0x0000000000105dac        0x0 mm/page_fault.o
- .data          0x0000000000105dac        0x0 fs/fs.o
- *fill*         0x0000000000105dac       0x14 00
- .data          0x0000000000105dc0      0x240 drivers/keyboard.o
-                0x0000000000105dc0                keymap
-                0x0000000000105e20                shift_keymap
-                0x0000000000105e80                do_handle_code
- .data          0x0000000000106000        0xc drivers/hd.o
-                0x0000000000106000                HD
- .data          0x000000000010600c        0x0 lib/printk.o
- .data          0x000000000010600c        0x0 drivers/vga.o
- .data          0x000000000010600c        0x0 kernel/spinlock.o
- .data          0x000000000010600c        0x0 lib/string.o
-                0x000000000010600c                _edata = .
+ .data          0x0000000000106e40        0xc boot/load.o
+ .data          0x0000000000106e4c        0x0 init/init.o
+ .data          0x0000000000106e4c        0x0 init/version.o
+ .data          0x0000000000106e4c        0x4 kernel/gdt.o
+                0x0000000000106e4c                gdt_desc_idx
+ .data          0x0000000000106e50        0x0 kernel/trap_asm.o
+ .data          0x0000000000106e50        0x0 kernel/traps.o
+ .data          0x0000000000106e50        0x0 kernel/timer.o
+ .data          0x0000000000106e50        0x8 kernel/sched.o
+                0x0000000000106e50                stack_start
+ .data          0x0000000000106e58        0x0 kernel/system_call.o
+ .data          0x0000000000106e58        0x0 kernel/kthread.o
+ .data          0x0000000000106e58        0x0 kernel/fork.o
+ .data          0x0000000000106e58        0x0 kernel/exit.o
+ .data          0x0000000000106e58        0x0 kernel/sys.o
+ .data          0x0000000000106e58        0x0 kernel/panic.o
+ .data          0x0000000000106e58        0x4 mm/memory.o
+                0x0000000000106e58                pg_dir
+ .data          0x0000000000106e5c        0x0 mm/pfault.o
+ *fill*         0x0000000000106e5c        0x4 00
+ .data          0x0000000000106e60       0x28 mm/slab.o
+ *fill*         0x0000000000106e88       0x18 00
+ .data          0x0000000000106ea0       0x2c mm/buddy.o
+                0x0000000000106ea0                buddy_size
+ .data          0x0000000000106ecc        0x0 mm/page_fault.o
+ .data          0x0000000000106ecc        0x0 fs/fs.o
+ *fill*         0x0000000000106ecc       0x14 00
+ .data          0x0000000000106ee0      0x240 drivers/keyboard.o
+                0x0000000000106ee0                keymap
+                0x0000000000106f40                shift_keymap
+                0x0000000000106fa0                do_handle_code
+ .data          0x0000000000107120        0xc drivers/hd.o
+                0x0000000000107120                HD
+ .data          0x000000000010712c        0x0 lib/printk.o
+ .data          0x000000000010712c        0x0 drivers/vga.o
+ .data          0x000000000010712c        0x0 kernel/spinlock.o
+ .data          0x000000000010712c        0x0 lib/string.o
+                0x000000000010712c                _edata = .
 
-.igot.plt       0x000000000010600c        0x0
+.igot.plt       0x000000000010712c        0x0
  .igot.plt      0x0000000000000000        0x0 boot/load.o
-                0x0000000000106010                . = ALIGN (0x10)
-                0x0000000000106010                __bss_start = .
+                0x0000000000107130                . = ALIGN (0x10)
+                0x0000000000107130                __bss_start = .
 
-.bss            0x0000000000106020    0x2658c
+.bss            0x0000000000107140    0x2958c
  *(.bss)
- .bss           0x0000000000106020        0x0 boot/load.o
- .bss           0x0000000000106020        0x0 init/init.o
- .bss           0x0000000000106020    0x10000 kernel/gdt.o
-                0x0000000000106020                new_gdt
- .bss           0x0000000000116020        0x0 kernel/trap_asm.o
- .bss           0x0000000000116020        0x0 kernel/traps.o
- .bss           0x0000000000116020        0x4 kernel/timer.o
-                0x0000000000116020                timer_tick
- *fill*         0x0000000000116024       0x1c 00
- .bss           0x0000000000116040     0x3000 kernel/sched.o
-                0x0000000000116040                init_task_stack
-                0x0000000000117040                user_stack
-                0x0000000000118040                init_user_stack
- .bss           0x0000000000119040        0x0 kernel/system_call.o
- .bss           0x0000000000119040        0x0 kernel/kthread.o
- .bss           0x0000000000119040        0x4 kernel/fork.o
-                0x0000000000119040                last_pid
- .bss           0x0000000000119044        0x0 kernel/sys.o
- .bss           0x0000000000119044        0x0 kernel/panic.o
- .bss           0x0000000000119044        0x0 mm/memory.o
- *fill*         0x0000000000119044       0x1c 00
- .bss           0x0000000000119060      0x2f8 mm/slab.o
- .bss           0x0000000000119358        0x8 mm/buddy.o
-                0x0000000000119358                buddy_chunk_num
-                0x000000000011935c                mm_buddy_base
- .bss           0x0000000000119360        0x0 mm/page_fault.o
- .bss           0x0000000000119360        0x0 fs/fs.o
- .bss           0x0000000000119360      0x1a0 drivers/keyboard.o
-                0x0000000000119360                key_buffer_count
-                0x0000000000119364                shift_flag
-                0x0000000000119368                caps_lock_flag
-                0x000000000011936c                e0_flag
-                0x0000000000119380                do_handle_e0_code
- .bss           0x0000000000119500        0x0 drivers/hd.o
- .bss           0x0000000000119500        0x0 lib/printk.o
- .bss           0x0000000000119500        0x0 drivers/vga.o
- .bss           0x0000000000119500        0x0 kernel/spinlock.o
- .bss           0x0000000000119500        0x0 lib/string.o
- COMMON         0x0000000000119500    0x10020 init/init.o
-                0x0000000000119500                task_list_head
-                0x0000000000119508                current
-                0x0000000000119520                mem_map
- COMMON         0x0000000000129520      0x800 kernel/traps.o
-                0x0000000000129520                new_idt
- COMMON         0x0000000000129d20      0x408 kernel/timer.o
-                0x0000000000129d20                timer_list
-                0x000000000012a120                timer_list_head
- *fill*         0x000000000012a128       0x18 00
- COMMON         0x000000000012a140       0xa0 kernel/sched.o
-                0x000000000012a140                init_task
- COMMON         0x000000000012a1e0       0x6c mm/slab.o
-                0x000000000012a1e0                kmem_list_head
-                0x000000000012a200                kmem_cache_st
- *fill*         0x000000000012a24c       0x14 00
- COMMON         0x000000000012a260     0x233c mm/buddy.o
-                0x000000000012a260                mm_buddy_array
- COMMON         0x000000000012c59c        0x5 drivers/keyboard.o
-                0x000000000012c59c                key_buffer
- *fill*         0x000000000012c5a1        0x3 00
- COMMON         0x000000000012c5a4        0x8 drivers/vga.o
-                0x000000000012c5a4                v_scr_y
-                0x000000000012c5a8                v_scr_x
-                0x000000000012c5ac                _end = .
+ .bss           0x0000000000107140        0x0 boot/load.o
+ .bss           0x0000000000107140        0x0 init/init.o
+ .bss           0x0000000000107140        0x0 init/version.o
+ .bss           0x0000000000107140    0x10000 kernel/gdt.o
+                0x0000000000107140                new_gdt
+ .bss           0x0000000000117140        0x0 kernel/trap_asm.o
+ .bss           0x0000000000117140        0x0 kernel/traps.o
+ .bss           0x0000000000117140        0x4 kernel/timer.o
+                0x0000000000117140                timer_tick
+ *fill*         0x0000000000117144       0x1c 00
+ .bss           0x0000000000117160     0x6000 kernel/sched.o
+                0x0000000000117160                init_task_stack
+                0x000000000011b160                user_stack
+                0x000000000011c160                init_user_stack
+ .bss           0x000000000011d160        0x0 kernel/system_call.o
+ .bss           0x000000000011d160        0x0 kernel/kthread.o
+ .bss           0x000000000011d160        0x4 kernel/fork.o
+                0x000000000011d160                last_pid
+ .bss           0x000000000011d164        0x0 kernel/exit.o
+ .bss           0x000000000011d164        0x0 kernel/sys.o
+ .bss           0x000000000011d164        0x0 kernel/panic.o
+ .bss           0x000000000011d164        0x0 mm/memory.o
+ .bss           0x000000000011d164        0x0 mm/pfault.o
+ *fill*         0x000000000011d164       0x1c 00
+ .bss           0x000000000011d180      0x2f8 mm/slab.o
+ .bss           0x000000000011d478        0x8 mm/buddy.o
+                0x000000000011d478                buddy_chunk_num
+                0x000000000011d47c                mm_buddy_base
+ .bss           0x000000000011d480        0x0 mm/page_fault.o
+ .bss           0x000000000011d480        0x0 fs/fs.o
+ .bss           0x000000000011d480      0x1a0 drivers/keyboard.o
+                0x000000000011d480                key_buffer_count
+                0x000000000011d484                shift_flag
+                0x000000000011d488                caps_lock_flag
+                0x000000000011d48c                e0_flag
+                0x000000000011d4a0                do_handle_e0_code
+ .bss           0x000000000011d620        0x0 drivers/hd.o
+ .bss           0x000000000011d620        0x0 lib/printk.o
+ .bss           0x000000000011d620        0x0 drivers/vga.o
+ .bss           0x000000000011d620        0x0 kernel/spinlock.o
+ .bss           0x000000000011d620        0x0 lib/string.o
+ COMMON         0x000000000011d620    0x10020 init/init.o
+                0x000000000011d620                task_list_head
+                0x000000000011d628                current
+                0x000000000011d640                mem_map
+ COMMON         0x000000000012d640      0x800 kernel/traps.o
+                0x000000000012d640                new_idt
+ COMMON         0x000000000012de40      0x408 kernel/timer.o
+                0x000000000012de40                timer_list
+                0x000000000012e240                timer_list_head
+ *fill*         0x000000000012e248       0x18 00
+ COMMON         0x000000000012e260       0xa0 kernel/sched.o
+                0x000000000012e260                init_task
+ COMMON         0x000000000012e300       0x6c mm/slab.o
+                0x000000000012e300                kmem_list_head
+                0x000000000012e320                kmem_cache_st
+ *fill*         0x000000000012e36c       0x14 00
+ COMMON         0x000000000012e380     0x233c mm/buddy.o
+                0x000000000012e380                mm_buddy_array
+ COMMON         0x00000000001306bc        0x5 drivers/keyboard.o
+                0x00000000001306bc                key_buffer
+ *fill*         0x00000000001306c1        0x3 00
+ COMMON         0x00000000001306c4        0x8 drivers/vga.o
+                0x00000000001306c4                v_scr_y
+                0x00000000001306c8                v_scr_x
+                0x00000000001306cc                _end = .
 OUTPUT(kernel.bin elf32-i386)
 
 .comment        0x0000000000000000       0x55
  .comment       0x0000000000000000       0x2a init/init.o
                                          0x2b (size before relaxing)
+ .comment       0x0000000000000000       0x2b init/version.o
  .comment       0x0000000000000000       0x2b kernel/gdt.o
  .comment       0x0000000000000000       0x2b kernel/traps.o
  .comment       0x0000000000000000       0x2b kernel/timer.o
  .comment       0x0000000000000000       0x2b kernel/sched.o
  .comment       0x0000000000000000       0x2b kernel/kthread.o
  .comment       0x0000000000000000       0x2b kernel/fork.o
+ .comment       0x0000000000000000       0x2b kernel/exit.o
  .comment       0x0000000000000000       0x2b kernel/sys.o
  .comment       0x0000000000000000       0x2b kernel/panic.o
  .comment       0x0000000000000000       0x2b mm/memory.o
@@ -467,6 +528,8 @@ OUTPUT(kernel.bin elf32-i386)
  .note.GNU-stack
                 0x0000000000000000        0x0 init/init.o
  .note.GNU-stack
+                0x0000000000000000        0x0 init/version.o
+ .note.GNU-stack
                 0x0000000000000000        0x0 kernel/gdt.o
  .note.GNU-stack
                 0x0000000000000000        0x0 kernel/traps.o
@@ -478,6 +541,8 @@ OUTPUT(kernel.bin elf32-i386)
                 0x0000000000000000        0x0 kernel/kthread.o
  .note.GNU-stack
                 0x0000000000000000        0x0 kernel/fork.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 kernel/exit.o
  .note.GNU-stack
                 0x0000000000000000        0x0 kernel/sys.o
  .note.GNU-stack

@@ -1,9 +1,8 @@
-#.include "gdt.h"
 .align 2
 .global divide_error, debug, nmi, int3, overflow, bounds
 .global invalid_op, coprocessor_segment_overrun, reserved, irq13
 .global double_fault, invalid_TSS, segment_not_present
-.global device_not_available, page_fault, timer_interrupt
+.global device_not_available, timer_interrupt
 .global stack_segment, general_protection, parallel_interrupt
 .global keyboard_interrupt, hd_interrupt, default_int
 
@@ -310,21 +309,6 @@ general_protection:
 	movw %ax, %es
 	movw %ax, %fs
         call do_general_protection
-        addl $4, %esp
-        RESTORE_ALL
-        iret
-
-.align 2
-page_fault:
-        SAVE_ALL
-	pushl %eax
-	movw $0x10, %ax
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	popl %eax
-        pushl %esp
-        call do_page_fault
         addl $4, %esp
         RESTORE_ALL
         iret

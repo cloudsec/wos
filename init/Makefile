@@ -4,6 +4,7 @@ CFLAGS	= -I ../include -pedantic -nostdlib -nostdinc -I include -fomit-frame-poi
 
 all:
 	$(CC) $(CFLAGS) -c init.c
+	$(CC) $(CFLAGS) -c version.c
 
 clean:
 	rm -f *.o

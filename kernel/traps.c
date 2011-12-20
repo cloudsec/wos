@@ -1,11 +1,12 @@
 /*
  * traps.c
  *
- * (c) 2011	wzt http://www.cloud-sec.org
+ * (c) 2011	wzt
  *
  */
 
 #include <wos/gdt.h>
+#include <wos/idt.h>
 #include <asm/asm.h>
 #include <wos/task.h>
 

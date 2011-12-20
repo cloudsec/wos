@@ -1,4 +1,5 @@
 #include <wos/gdt.h>
+#include <wos/idt.h>
 #include <asm/asm.h>
 #include <wos/task.h>
 #include <wos/sched.h>
@@ -17,7 +18,7 @@ static inline _syscall0(int, fork)
 static inline _syscall0(int, pause)
 static inline _syscall1(int, write_s, char*, msg)
 
-char init_task_stack[PAGE_SIZE] = {0};
+unsigned int init_task_stack[PAGE_SIZE] = {0};
 struct task_struct init_task;
 
 char user_stack[PAGE_SIZE] = {0};
@@ -94,8 +95,10 @@ void schedule(void)
 	/* schedule can never get here. */
 }
 
-/* init_task aren't add into the task list, it will not join in the process schedule,
-   it runs run only at the time there is no process choosed by scheduler(). */
+/* 
+ * init_task aren't add into the task list, it will not join in the process schedule,
+ * it runs run only at the time there is no process choosed by scheduler(). 
+ */
 void setup_init_task(void)
 {
 	init_task.tss.prev_task_link = 0;

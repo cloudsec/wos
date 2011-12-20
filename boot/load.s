@@ -16,7 +16,7 @@ startup_32:
 	mov %ax, %fs
 	mov %ax, %gs
 	mov %ax, %ss
-	movl $0x2000, %esp
+	movl $0x4000, %esp
 
         xorl %eax, %eax
 1:      incl %eax
@@ -28,19 +28,14 @@ startup_32:
 2:
 	jmp 2b
 
-#.data
+.data
 .align 2
 new_gdt48:
         .word 8192*8 - 1
         .long new_gdt
 
-#.data
+.data
 .align 2
 new_idt48:
 	.word 256*8 - 1
 	.long new_idt
-
-#.data
-#	.fill 2048,4,0
-#init_stack:
-#	.word init_stack

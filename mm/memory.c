@@ -6,6 +6,7 @@
  */
 
 #include <wos/gdt.h>
+#include <wos/idt.h>
 #include <asm/asm.h>
 #include <wos/task.h>
 #include <wos/mm.h>
@@ -28,7 +29,7 @@ void setup_kernel_pte(void)
 	for (pde_idx = 0; pde_idx < KERNEL_PDE_NUM; pde_idx++) {
 		*(kernel_pde + pde_idx) = pte_addr | PAGE_USER_MODE;
 		kernel_pte = (pte_t *)pte_addr;
-		//printk("0x%x, 0x%x\n", *(kernel_pde + pde_idx), kernel_pte);
+		DbgPrint("0x%x, 0x%x\n", *(kernel_pde + pde_idx), kernel_pte);
 		for (pte_idx = 0; pte_idx < PAGE_PTE_NUM; pte_idx++) {
 			*(kernel_pte + pte_idx) = py_addr | PAGE_USER_MODE;
 			py_addr += PAGE_SIZE;
@@ -129,8 +130,6 @@ int copy_page_tables(struct task_struct *new_tsk) {
 	for (pde_idx = 0; pde_idx < PAGE_PDE_NUM; pde_idx++) {
 		old_pde = (pde_t *)old_cr3 + pde_idx;
 		if (PDE_IS_PRESENT(*old_pde)) {
-			///*(new_pde + pde_idx) = *old_pde;
-			//DbgPrint("pde_idx: 0x%x, pde: 0x%x\n", pde_idx, *old_pde);
 			new_pte = (pte_t *)alloc_page(PAGE_ZERO);
 			if (!new_pte) {
 				DbgPrint("Alloc page failed.\n");
@@ -151,7 +150,9 @@ int copy_page_tables(struct task_struct *new_tsk) {
 					tmp_pte &= 0xfffffffd;
 					*(new_pte + pte_idx) = tmp_pte; 
 					/* kernel space is shared to all task, 
-					 * so the pte is writable. */
+					 * so the pte is writable. The idle task
+					 * is in the kernel memory, so make it
+					 * writable. */
 					if (tmp_pte > KERNEL_MEM_SIZE) {
 						*(old_pte + pte_idx) = tmp_pte;
 					}
@@ -164,6 +165,8 @@ int copy_page_tables(struct task_struct *new_tsk) {
 	printk("new task cr3 addr: 0x%x\n", new_tsk->tss.cr3);
 	/* flush current task cr3, beacuse we have set shared pte write pretect. */
 	flush_cr3(current->tss.cr3);
+	
+	return 0;
 }
 
 void init_mm(void)
